@@ -31,3 +31,58 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Ignore object files and static libraries
+*.o
+*.a
+*.lib
+
+# Ignore dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Ignore executable files
+*.exe
+*.out
+*.app
+
+# Ignore build directories
+/build/
+/bin/
+/obj/
+/Debug/
+/Release/
+
+# Ignore IDE-specific files
+*.log
+*.workspace
+*.project
+*.cproject
+*.settings
+*.idea/
+*.vscode/
+
+# Ignore temporary files
+*.tmp
+*.swp
+*.bak
+*.old
+
+# Ignore generated files
+*.d
+*.dep
+*.dSYM/
+*.ipch/
+*.pch
+*.gch
+
+# Ignore CMake build files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Ignore other common files
+*.DS_Store
+*.directory
