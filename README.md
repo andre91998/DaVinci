@@ -58,6 +58,12 @@ $ sudo cmake --build build/ --target install
 - **gRPC:**
 Follow the setup instructions located [here](https://grpc.io/docs/languages/cpp/quickstart/#setup)
 
+- **gTest:**
+
+- **python:**
+python3 installation
+python -m venv .
+
 #### Hub
 
 ## Scripts and Utilities
