@@ -21,7 +21,7 @@ def main():
     topic = "your/test/topic"
 
     # Set max test wait time (seconds)
-    duration = 300
+    duration = 10
 
     # Function to simulate sensor data publishing
     def simulate_sensor_data():
@@ -38,6 +38,7 @@ def main():
     def on_message(client, userdata, message):
         print(f"Message received: {message.payload.decode()} on topic {message.topic}")
         print("MQTT Sensor Enablement Test: PASSED!")
+        global msgReceived
         msgReceived = True
 
     # Callback function when the client connects to the broker
@@ -45,8 +46,6 @@ def main():
         if rc == 0:
             print("Connected to broker")
             client.subscribe(topic)
-            # Publish a test message to the topic
-            client.publish(topic, "Test message")
         else:
             print(f"Connection failed with code {rc}")
 
@@ -61,7 +60,7 @@ def main():
     client.connect(broker, port, 60)
 
     # Start the sensor data simulation in a separate thread
-    sensor_thread = threading.Thread(target=simulate_sensor_data)
+    sensor_thread = threading.Thread(target=simulate_sensor_data).start()
 
 # Start the loop to process received messages
     # Start the loop
