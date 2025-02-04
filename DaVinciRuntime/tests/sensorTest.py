@@ -13,11 +13,13 @@ import sys
 def main():
     global msgReceived
     msgReceived = False
+    
     # Define the MQTT broker details
     broker = "localhost"
     port = 1883
-    tempTopic = "DaVinci/Plug1/events/rpc"
-    plugTopic = "DaVinciPlug1/events/rpc"
+    plugTopic = "DaVinci-Plug-1/events/rpc"
+    dimmerTopic = "DaVinci-Dimmer-1/events/rpc"
+    tempTopic = "DaVinci-Temp-1/events/rpc"
 
     # Set max test wait time (seconds)
     duration = 300
@@ -34,6 +36,7 @@ def main():
         if rc == 0:
             print("Connected to broker")
             client.subscribe(tempTopic)
+            client.subscribe(dimmerTopic)
             client.subscribe(plugTopic)
         else:
             print(f"Connection failed with code {rc}")

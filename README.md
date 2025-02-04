@@ -121,6 +121,12 @@ $ sudo cmake --build build/ --target install
 - **gRPC:**
 Follow the setup instructions located [here](https://grpc.io/docs/languages/cpp/quickstart/#setup)
 
+- **libjsoncpp-dev:**
+Run:
+```
+sudo apt-get install  
+```
+
 - **gTest:**
 
 - **python:**
