@@ -17,3 +17,18 @@ TEST(MQTTClientTest, TestSubscription) {
     client.stop();
     client.disconnect();
 }
+
+TEST(MQTTClientTest, TestMessageArrived) {
+    // Mocking the MQTTClientCallback and message_arrived behavior
+}
+
+TEST(MQTTClientTest, TestOnMessage) {
+    std::vector<std::string> topics = {"test/topic1"};
+    MQTTClient client("localhost", 1883, topics);
+    client.connect();
+    client.start();
+    client.on_message("test/topic1", "{\"key\":\"value\"}");
+    // Add more assertions based on the expected behavior of on_message
+    client.stop();
+    client.disconnect();
+}
