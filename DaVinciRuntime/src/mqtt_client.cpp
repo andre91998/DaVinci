@@ -62,6 +62,20 @@ void MQTTClient::stop() {
 void MQTTClient::on_message(const std::string& topic, const std::string& payload) {
     std::cout << "Message received on topic " << topic << ": " << payload << std::endl;
     //TODO: callback logic for when client receives data
+    JSONProcessor* processor = processorFactory_.getProcessor(topic);
+    if (processor) {
+        Json::CharReaderBuilder builder;
+        Json::Value json;
+        std::string errs;
+        std::istringstream ss(payload);
+        if (Json::parseFromStream(builder, ss, &json, &errs)) {
+            processor->process(json);
+        } else {
+            std::cerr << "Failed to parse JSON: " << errs << std::endl;
+        }
+    } else {
+        std::cerr << "No processor found for topic: " << topic << std::endl;
+    }
 }
 
 void MQTTClient::on_connect() {
