@@ -19,7 +19,7 @@ private:
 
 class MQTTClient {
 public:
-    MQTTClient(const std::string& broker, int port, const std::string& topic);
+    MQTTClient(const std::string& broker, int port, const std::vector<std::string>& topics);
     ~MQTTClient();
 
     bool connect();
@@ -32,7 +32,7 @@ public:
 private:
     std::string broker_;
     int port_;
-    std::string topic_;
+    std::vector<std::string> topics_;
     mqtt::client* client_;
     MQTTClientCallback* callback_;
 

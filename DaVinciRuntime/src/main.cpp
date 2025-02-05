@@ -7,7 +7,7 @@ int main(int argc, char** argv) {
 
     //TODO: Load configuration settings
     Config config;
-    config.load("config.json");
+    config.load("config/config.json");
 
     // TODO: Initialize the SQLite database
     // Database db(config.getDatabasePath());
@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
     
     try {
     // Initialize the MQTT client
-    MQTTClient mqttClient(config.getMQTTBroker(), config.getMQTTPort(), config.getMQTTTopic());
+    MQTTClient mqttClient(config.getMQTTBroker(), config.getMQTTPort(), config.getMQTTTopics());
     if (!mqttClient.connect()) {
         std::cerr << "Failed to connect to the MQTT broker." << std::endl;
         return 1;

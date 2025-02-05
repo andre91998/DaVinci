@@ -19,10 +19,13 @@ bool Config::load(const std::string& filepath) {
 
     mqttBroker_ = root["mqtt_broker"].asString();
     mqttPort_ = root["mqtt_port"].asInt();
-    mqttTopic_ = root["mqtt_topic"].asString();
     databasePath_ = root["database_path"].asString();
     grpcPort_ = root["grpc_port"].asInt();
-
+    const Json::Value stringArray = root["mqtt_topics"];
+    for (const auto& item : stringArray) {
+        mqttTopics_.push_back(item.asString());
+    }
+    
     return true;
 }
 
@@ -34,8 +37,8 @@ int Config::getMQTTPort() const {
     return mqttPort_;
 }
 
-std::string Config::getMQTTTopic() const {
-    return mqttTopic_;
+std::vector<std::string> Config::getMQTTTopics() const {
+    return mqttTopics_;
 }
 
 std::string Config::getDatabasePath() const {

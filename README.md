@@ -128,6 +128,10 @@ sudo apt-get install
 ```
 
 - **gTest:**
+Run:
+```
+sudo apt-get install libgtest-dev
+```
 
 - **python:**
 python3 installation

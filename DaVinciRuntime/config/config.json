@@ -1,7 +1,11 @@
 {
     "mqtt_broker": "localhost",
     "mqtt_port": 1883,
-    "mqtt_topic": "DaVinci-Plug-1/events/rpc",
+    "mqtt_topics": [
+        "DaVinci-Plug-1/events/rpc",
+        "DaVinci-Dimmer-1/events/rpc",
+        "DaVinci-Temp-1/events/rpc"
+    ],
     "database_path": "path/to/your/database.db",
     "grpc_port": 50051
 }
