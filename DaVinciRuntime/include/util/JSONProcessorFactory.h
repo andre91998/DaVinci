@@ -2,9 +2,9 @@
 #define JSON_PROCESSOR_FACTORY_H
 
 #include "json_processor.h"
-#include "ShellyPlusPlugProcessor.h"
-#include "ShellyPlusDimmerProcessor.h"
-#include "ShellyPlusTemperatureProcessor.h"
+#include "ShellyPlusPlugNotificationProcessor.h"
+#include "ShellyPlusDimmerNotificationProcessor.h"
+#include "ShellyPlusTemperatureNotificationProcessor.h"
 #include <map>
 #include <memory>
 #include <regex>
@@ -17,9 +17,9 @@ class JSONProcessorFactory {
 public:
     JSONProcessorFactory() {
         // Register processors for specific topics
-        registerProcessor(std::regex("DaVinci-Plug-\\d+/events/rpc"), std::make_unique<ShellyPlusPlugProcessor>());
-        registerProcessor(std::regex("DaVinci-Dimmer-\\d+/events/rpc"), std::make_unique<ShellyPlusPlugProcessor>());
-        registerProcessor(std::regex("DaVinci-Temperature-\\d+/events/rpc"), std::make_unique<ShellyPlusPlugProcessor>());
+        registerProcessor(std::regex("^shellypluswdus-.*?/events/rpc$"), std::make_unique<ShellyPlusDimmerNotificationProcessor>());
+        registerProcessor(std::regex("^shellyplugus-.*?/events/rpc$"), std::make_unique<ShellyPlusPlugNotificationProcessor>());
+        registerProcessor(std::regex("^shellyhtg3-.*?/events/rpc$"), std::make_unique<ShellyPlusTemperatureNotificationProcessor>());
     }
 
     JSONProcessor* getProcessor(const std::string& topic) {

@@ -7,7 +7,7 @@
 /**
 * Implement the JSONProcessor interface for specific JSON schema 
 */
-class ShellyPlusPlugProcessor : public JSONProcessor {
+class ShellyPlusPlugNotificationProcessor : public JSONProcessor {
 public:
     void process(const Json::Value& json) override {
         std::cout << "Processing ShellyPlus-Plug data: " << json.toStyledString() << std::endl;

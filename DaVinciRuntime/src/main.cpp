@@ -5,9 +5,9 @@
 
 int main(int argc, char** argv) {
 
-    //TODO: Load configuration settings
+    //TODO: Change where config lives to something more scalable
     Config config;
-    config.load("config/config.json");
+    config.load("/home/andre/projects/DaVinci/DaVinciRuntime/config/config.json");
 
     // TODO: Initialize the SQLite database
     // Database db(config.getDatabasePath());

@@ -17,6 +17,11 @@ bool Config::load(const std::string& filepath) {
     Json::Value root;
     file >> root;
 
+    if (root.isNull()) {
+        std::cerr << "Failed to parse config file: " << filepath << std::endl;
+        return false;
+    }
+
     mqttBroker_ = root["mqtt_broker"].asString();
     mqttPort_ = root["mqtt_port"].asInt();
     databasePath_ = root["database_path"].asString();
@@ -25,7 +30,18 @@ bool Config::load(const std::string& filepath) {
     for (const auto& item : stringArray) {
         mqttTopics_.push_back(item.asString());
     }
-    
+
+    std::cout << "Config loaded successfully from " << filepath << std::endl;
+    std::cout << "MQTT Broker: " << mqttBroker_ << std::endl;
+    std::cout << "MQTT Port: " << mqttPort_ << std::endl;
+    std::cout << "Database Path: " << databasePath_ << std::endl;
+    std::cout << "gRPC Port: " << grpcPort_ << std::endl;
+    std::cout << "MQTT Topics: ";
+    for (const auto& topic : mqttTopics_) {
+        std::cout << topic << " ";
+    }
+    std::cout << std::endl;
+
     return true;
 }
 
