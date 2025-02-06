@@ -2,7 +2,7 @@
 #define JSON_PROCESSOR_H
 
 #include <string>
-#include <json/json.h>
+#include <jsoncpp/json/json.h>
 
 /**
 * The JSONProcessor class defines the interface for processing JSON data.

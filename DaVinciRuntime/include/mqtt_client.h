@@ -2,15 +2,19 @@
 #define MQTT_CLIENT_H
 
 #include <string>
-#include "mqtt/client.h"
-#include "mqtt/async_client.h"
+#include <vector>
+#include <mqtt/client.h>
+#include "json_processor.h"
 
-// Forward declaration of MQTTClient
+// Forward declaration of JSONProcessorFactory
+class JSONProcessorFactory;
+
 class MQTTClient;
 
 class MQTTClientCallback : public virtual mqtt::callback {
 public:
     MQTTClientCallback(MQTTClient* client);
+
     void message_arrived(mqtt::const_message_ptr msg) override;
 
 private:
@@ -26,7 +30,6 @@ public:
     void disconnect();
     void start();
     void stop();
-
     void on_message(const std::string& topic, const std::string& payload);
 
 private:
@@ -35,6 +38,7 @@ private:
     std::vector<std::string> topics_;
     mqtt::client* client_;
     MQTTClientCallback* callback_;
+    JSONProcessorFactory* processorFactory_;
 
     void on_connect();
     void on_disconnect();

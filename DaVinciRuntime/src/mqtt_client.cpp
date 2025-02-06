@@ -1,4 +1,5 @@
 #include "mqtt_client.h"
+#include "JSONProcessorFactory.h"
 #include <iostream>
 
 const std::string CLIENT_ID("DaVinciRuntime");
@@ -12,7 +13,7 @@ void MQTTClientCallback::message_arrived(mqtt::const_message_ptr msg) {
 }
 
 MQTTClient::MQTTClient(const std::string& broker, int port, const std::vector<std::string>& topics)
-    : broker_(broker), port_(port), topics_(topics), client_(nullptr), callback_(nullptr) {}
+    : broker_(broker), port_(port), topics_(topics), client_(nullptr), callback_(nullptr), processorFactory_(new JSONProcessorFactory()) {}
 
 MQTTClient::~MQTTClient() {
     if (client_) {
@@ -20,6 +21,9 @@ MQTTClient::~MQTTClient() {
     }
     if (callback_) {
         delete callback_;
+    }
+    if (processorFactory_) {
+        delete processorFactory_;
     }
 }
 
@@ -61,8 +65,7 @@ void MQTTClient::stop() {
 
 void MQTTClient::on_message(const std::string& topic, const std::string& payload) {
     std::cout << "Message received on topic " << topic << ": " << payload << std::endl;
-    //TODO: callback logic for when client receives data
-    JSONProcessor* processor = processorFactory_.getProcessor(topic);
+    JSONProcessor* processor = processorFactory_->getProcessor(topic);
     if (processor) {
         Json::CharReaderBuilder builder;
         Json::Value json;
