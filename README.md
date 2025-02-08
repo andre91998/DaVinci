@@ -133,6 +133,12 @@ Run:
 sudo apt-get install libgtest-dev
 ```
 
+- **gMock:**
+Run:
+```
+sudo apt-get install libgmock-dev
+```
+
 - **python:**
 python3 installation
 python -m venv .

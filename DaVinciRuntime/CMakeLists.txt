@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(PahoMqttCpp REQUIRED)
 find_package(GTest REQUIRED)
+#find_package(GMock REQUIRED)
 
 # Find and link the jsoncpp library
 find_package(jsoncpp CONFIG REQUIRED)
@@ -16,6 +17,7 @@ find_package(jsoncpp CONFIG REQUIRED)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/util)
 include_directories(${JSONCPP_INCLUDE_DIRS})
+include_directories(${GTest_INCLUDE_DIRS})
 
 # Source Files
 set (SOURCES
@@ -35,9 +37,12 @@ target_link_libraries(DaVinciRuntime
 
 # Test Source Files
 set(TEST_SOURCES
-    tests/test_main.cpp
-    tests/test_mqtt_client.cpp
+    test/test_main.cpp
+    test/test_mqtt_client.cpp
+    test/test_json.cpp
+    test/test_JSONProcessorFactory.cpp
     src/mqtt_client.cpp  # Include implementation files required for tests
+    src/config.cpp
 )
 
 # Add test executable
@@ -49,6 +54,8 @@ target_link_libraries(runTests
     jsoncpp_lib
     GTest::gtest
     GTest::gtest_main
+    GTest::gmock
+    GTest::gmock_main
 )
 
 # Add tests
