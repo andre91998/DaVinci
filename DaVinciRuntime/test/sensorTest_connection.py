@@ -13,7 +13,7 @@ import requests
 
 #TODO: make this test use the topics from config.json
 def main():
-    return_code = 0
+    return_code = 1
     
     # Define the URL for the POST request
     plugUrl = f"http://192.168.86.66/rpc"
@@ -42,9 +42,9 @@ def main():
         print("Response JSON:", response.json())
         connected = response.json()['result']['connected']
         if not connected:
-            return_code = 1
+            return_code = 0
 
-    if return_code == 1:
+    if return_code == 0:
         print("MQTT Sensor Enablement Test: FAILED!")
     else:
         print("MQTT Sensor Enablement Test: PASSED!")

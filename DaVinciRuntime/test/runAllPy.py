@@ -1,12 +1,14 @@
 import os
 import subprocess
+from art import *
 
 def run_scripts_in_directory(directory):
     # List all files in the directory
     files = os.listdir(directory)
     
     # Filter out only Python scripts
-    python_scripts = [f for f in files if f.endswith('.py')]
+    python_scripts = [f for f in files if f.endswith('.py') and f != 'runAllPy.py']
+
     
     # Dictionary to store the return codes
     return_codes = {}
@@ -34,5 +36,9 @@ def run_scripts_in_directory(directory):
 directory = '.'
 return_codes = run_scripts_in_directory(directory)
 
+print()
+ascii_art = text2art("TEST RESULTS:")
+print(ascii_art)
+print()
 for script, code in return_codes.items():
-    print(f"Script: {script}, Return Code: {code}")
+    print(f"Script: {script}: " + "PASS" if code == 1 else "FAIL")

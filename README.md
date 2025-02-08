@@ -164,8 +164,27 @@ sudo apt-get install libgmock-dev
     - ```python -m venv .```
     - ```source bin/activate```
     - ```pip install requests```
+    - ```pip install art```
 
 #### Hub
+
+### Compiling
+#### DaVinciRuntime
+If you are also running on a aarch64 linux machine like the RPi 5, then all you need to do to is run the build.sh script located in the DaVinciRuntime directory:
+```
+./build.sh
+```
+
+#### DaVinciHub
+
+### Running Tests
+#### DaVinciRuntime
+- **gTest Unit tests:** run the *runTests* executable that can be found in the *cmake/build* folder after compiling the DaVinciRuntime project:
+    - ```./cmake/build/runTests```
+- **Python Integration tests**: run the *runAllPy.py* scripts in the tests directory:
+    - ``` python3 runAllPy.py```
+#### DaVinciHub
+
 
 ## Scripts and Utilities
 
