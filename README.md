@@ -160,8 +160,10 @@ sudo apt-get install libgmock-dev
 ```
 
 - **python:**
-python3 installation
-python -m venv .
+    - python3 installation
+    - ```python -m venv .```
+    - ```source bin/activate```
+    - ```pip install requests```
 
 #### Hub
 

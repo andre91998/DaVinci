@@ -18,17 +18,17 @@ def main():
     # Define the MQTT broker details
     broker = "localhost"
     port = 1883
-    plugTopic = "shellyplugus-d8132ad47cdc/events/rpc"
-    dimmerTopic = "shellypluswdus-b0b21c121f1c/events/rpc"
-    tempTopic = "shellyhtg3-3030f9e711e4/events/rpc"
+    plugTopic = "shellyplugus-d8132ad47cdc/events/wrongTopic"
+    dimmerTopic = "shellypluswdus-b0b21c121f1c/events/wrongTopic"
+    tempTopic = "shellyhtg3-3030f9e711e4/events/wrongTopic"
 
     # Set max test wait time (seconds)
-    duration = 300
+    duration = 20
 
     # Callback function when a message is received
     def on_message(client, userdata, message):
         print(f"Message received: {message.payload.decode()} on topic {message.topic}")
-        print("MQTT Sensor Enablement Test: PASSED!")
+        print("MQTT Sensor Enablement Test: FAILED!")
         global msgReceived
         msgReceived = True
 
@@ -64,14 +64,14 @@ def main():
             break
 
     if not msgReceived:
-        print("MQTT Sensor Enablement Test: FAILED!")
+        print("MQTT Sensor Enablement Test: PASSED!")
 
     # Stop the loop
     client.loop_stop()
     if msgReceived:
-        return_code = 1
-    else:
         return_code = 0
+    else:
+        return_code = 1
     
     sys.exit(return_code)
 
