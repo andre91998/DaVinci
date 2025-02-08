@@ -1,0 +1,11 @@
+{
+    "mqtt_broker": "localhost",
+    "mqtt_port": 1883,
+    "mqtt_topics": [
+        "shellyplugus-d8132ad47cdc/events/rpc",
+        "shellypluswdus-b0b21c121f1c/events/rpc",
+        "shellyhtg3-3030f9e711e4/events/rpc"
+    ],
+    "database_path": "path/to/your/database.db",
+    "grpc_port": 50051
+}

@@ -1,0 +1,40 @@
+cmake_minimum_required(VERSION 3.10)
+project(MyProject)
+
+# Find required packages
+find_package(gRPC REQUIRED)
+find_package(Protobuf REQUIRED)
+find_package(SQLite3 REQUIRED)
+find_package(PahoMqttCpp REQUIRED)
+
+# Include directories
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+# Proto file
+set(PROTO_FILE ${CMAKE_CURRENT_SOURCE_DIR}/proto/your_service.proto)
+
+# Generate gRPC and Protobuf files
+protobuf_generate_cpp(PROTO_SRCS PROTO_HDRS ${PROTO_FILE})
+grpc_generate_cpp(GRPC_SRCS GRPC_HDRS ${PROTO_FILE})
+
+# Source files
+set(SOURCES
+    src/main.cpp
+    src/mqtt_client.cpp
+    src/grpc_server.cpp
+    src/database.cpp
+    src/config.cpp
+    ${PROTO_SRCS}
+    ${GRPC_SRCS}
+)
+
+# Add executable
+add_executable(MyProject ${SOURCES})
+
+# Link libraries
+target_link_libraries(MyProject
+    gRPC::grpc++
+    Protobuf::libprotobuf
+    SQLite::SQLite3
+    PahoMqttCpp::paho-mqttpp3
+)

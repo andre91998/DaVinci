@@ -85,6 +85,26 @@ The following example is for how we configured the *Shelly Plus Plug US*
     - Reboot the Sensor for the settings to take effect
 
 ### Running the DaVinci Runtime
+The DaVinciRuntime executable is named: DaVinciRuntime. It is manually runnable as follows:
+
+```
+./DaVinciRuntime
+```
+
+However, it does require a config.json to be able to start properly. This file must be placed in:
+
+```
+/usr/config/DaVinci
+```
+
+That directory most likely does not exist for you, so you will likely need to:
+
+```
+sudo mkdir /usr/config
+sudo mkdir /usr/config/DaVinci
+```
+
+and then place your *config.json* file in that directory.
 
 ### Running the DaVinci Hub
 
@@ -121,7 +141,23 @@ $ sudo cmake --build build/ --target install
 - **gRPC:**
 Follow the setup instructions located [here](https://grpc.io/docs/languages/cpp/quickstart/#setup)
 
+- **libjsoncpp-dev:**
+Run:
+```
+sudo apt-get install  
+```
+
 - **gTest:**
+Run:
+```
+sudo apt-get install libgtest-dev
+```
+
+- **gMock:**
+Run:
+```
+sudo apt-get install libgmock-dev
+```
 
 - **python:**
 python3 installation
@@ -131,4 +167,4 @@ python -m venv .
 
 ## Scripts and Utilities
 
-In the *Scripts* we have included scripts that you might find usefull when verifying your environment is good to go
+In the *Scripts* we have included scripts that you might find useful when verifying your environment is good to go
