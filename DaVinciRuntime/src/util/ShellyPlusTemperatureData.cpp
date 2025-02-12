@@ -1,5 +1,16 @@
 #include "ShellyPlusTemperatureData.h"
 
+
+// Default constructor implementation
+ShellyPlusTemperatureData::ShellyPlusTemperatureData() {
+    // Initialization code here if needed
+}
+
+// Default destructor definition
+ShellyPlusTemperatureData::~ShellyPlusTemperatureData() {
+    // Cleanup code here if needed
+}
+
 ShellyPlusTemperatureData::ShellyPlusTemperatureData(const std::string& source, double temperature, 
     double humidity, double timestamp)
     : temperatureC_(temperature), humidity_(humidity), timestamp_(timestamp) {}

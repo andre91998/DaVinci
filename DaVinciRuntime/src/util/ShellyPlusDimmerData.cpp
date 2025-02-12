@@ -1,5 +1,15 @@
 #include "ShellyPlusDimmerData.h"
 
+// Default constructor implementation
+ShellyPlusDimmerData::ShellyPlusDimmerData() {
+    // Initialization code here if needed
+}
+
+// Default destructor definition
+ShellyPlusDimmerData::~ShellyPlusDimmerData() {
+    // Cleanup code here if needed
+}
+
 ShellyPlusDimmerData::ShellyPlusDimmerData(const std::string& source, int brightness, bool state, double timestamp)
     : source_(source), brightness_(brightness), state_(state), timestamp_(timestamp) {}
 

@@ -5,8 +5,11 @@
 
 class ShellyPlusTemperatureData {
 public:
+    ShellyPlusTemperatureData();
     ShellyPlusTemperatureData(const std::string& source, double humidity, double tempC, double timestamp);
 
+    ~ShellyPlusTemperatureData();
+    
     std::string getSource() const;
     double getTemperature() const;
     double getHumidity() const;

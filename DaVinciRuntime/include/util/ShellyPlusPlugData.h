@@ -5,7 +5,10 @@
 
 class ShellyPlusPlugData {
 public:
+    ShellyPlusPlugData();
     ShellyPlusPlugData(const std::string& src, double power, double timestamp);
+
+    ~ShellyPlusPlugData();
 
     std::string getSource() const;
     double getPower() const;

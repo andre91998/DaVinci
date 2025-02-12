@@ -3,7 +3,6 @@
 #include "ShellyPlusDimmerNotificationProcessor.h"
 #include <iostream>
 
-
 // Default constructor implementation
 ShellyPlusDimmerNotificationProcessor::ShellyPlusDimmerNotificationProcessor() {
     // Initialization code here if needed
@@ -14,7 +13,7 @@ ShellyPlusDimmerNotificationProcessor::~ShellyPlusDimmerNotificationProcessor() 
     // Cleanup code here if needed
 }
 
-void ShellyPlusDimmerNotificationProcessor::process(const Json::Value& json) {
+JSONProcessor::SensorData ShellyPlusDimmerNotificationProcessor::process(const Json::Value& json) {
     
     std::cout << "Processing ShellyPlus-Dimmer data: " << json.toStyledString() << std::endl;
 
@@ -27,6 +26,7 @@ void ShellyPlusDimmerNotificationProcessor::process(const Json::Value& json) {
 
     ShellyPlusDimmerData dimmerData(source, brightness, output, ts);
     logData(dimmerData);
+    return dimmerData;
 }
 
 void ShellyPlusDimmerNotificationProcessor::logData(ShellyPlusDimmerData dimmerData) {

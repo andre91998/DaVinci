@@ -10,7 +10,7 @@ ShellyPlusPlugNotificationProcessor::~ShellyPlusPlugNotificationProcessor() {
     // Cleanup code here if needed
 }
 
-void ShellyPlusPlugNotificationProcessor::process(const Json::Value& json) {
+JSONProcessor::SensorData ShellyPlusPlugNotificationProcessor::process(const Json::Value& json) {
     
     std::cout << "Processing ShellyPlus-Plug data: " << json.toStyledString() << std::endl;
 
@@ -23,6 +23,7 @@ void ShellyPlusPlugNotificationProcessor::process(const Json::Value& json) {
 
     ShellyPlusPlugData plugData(src, total, ts);
     logData(plugData);
+    return plugData;
 }
 
 void ShellyPlusPlugNotificationProcessor::logData(ShellyPlusPlugData plugData) {

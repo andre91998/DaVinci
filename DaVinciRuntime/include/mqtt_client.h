@@ -5,6 +5,7 @@
 #include <vector>
 #include <mqtt/client.h>
 #include "json_processor.h"
+#include "sensor_types.h"
 
 // Forward declaration of JSONProcessorFactory
 class JSONProcessorFactory;

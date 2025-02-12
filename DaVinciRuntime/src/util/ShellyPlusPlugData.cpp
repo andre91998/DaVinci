@@ -1,5 +1,15 @@
 #include "ShellyPlusPlugData.h"
 
+// Default constructor implementation
+ShellyPlusPlugData::ShellyPlusPlugData() {
+    // Initialization code here if needed
+}
+
+// Default destructor definition
+ShellyPlusPlugData::~ShellyPlusPlugData() {
+    // Cleanup code here if needed
+}
+
 ShellyPlusPlugData::ShellyPlusPlugData(const std::string& source, double power, double timestamp)
     : source_(source), power_(power), timestamp_(timestamp) {}
 

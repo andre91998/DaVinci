@@ -5,8 +5,11 @@
 
 class ShellyPlusDimmerData {
 public:
+    ShellyPlusDimmerData();
     ShellyPlusDimmerData(const std::string& src, int brightness,
          bool state, double timestamp);
+
+    ~ShellyPlusDimmerData();
 
     std::string getSource() const;
     int getBrightness() const;

@@ -2,6 +2,7 @@
 #define SHELLY_PLUS_DIMMER_PROCESSOR_H
 
 #include "json_processor.h"
+#include "sensor_types.h"
 #include "ShellyPlusDimmerData.h"
 #include <iostream>
 
@@ -9,7 +10,10 @@ class ShellyPlusDimmerNotificationProcessor : public JSONProcessor {
 public:
     ShellyPlusDimmerNotificationProcessor(); // Default constructor 
     virtual ~ShellyPlusDimmerNotificationProcessor(); // Default destructor
-    void process(const Json::Value& json);
+    JSONProcessor::SensorData process(const Json::Value& json);
+    int getType() const override {
+        return (int) SensorType::SHELLY_DIMMER;
+    };
 
 private:
     void logData(ShellyPlusDimmerData shellyPlusDimmerData);

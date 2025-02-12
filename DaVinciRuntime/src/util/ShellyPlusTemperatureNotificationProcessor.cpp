@@ -10,7 +10,7 @@ ShellyPlusTemperatureNotificationProcessor::~ShellyPlusTemperatureNotificationPr
     // Cleanup code here if needed
 }
 
-void ShellyPlusTemperatureNotificationProcessor::process(const Json::Value& json) {
+JSONProcessor::SensorData ShellyPlusTemperatureNotificationProcessor::process(const Json::Value& json) {
     std::cout << "Processing ShellyPlus-Temperature data: " << json.toStyledString() << std::endl;
 
     std::string src = json["src"].asString();
@@ -21,23 +21,28 @@ void ShellyPlusTemperatureNotificationProcessor::process(const Json::Value& json
 
     // Handle different methods
     if (method == "NotifyFullStatus") {
-        processFullStatus(json, src);
+        return processFullStatus(json, src);
     } else if (method == "NotifyStatus") {
-        processStatus(json);
+        return processStatus(json);
     } else {
         std::cerr << "Unknown method: " << method << std::endl;
+        ShellyPlusTemperatureData temperatureData("stub", 0, 0, 0);
+        return temperatureData;
     }
 }
 
-void ShellyPlusTemperatureNotificationProcessor::processStatus(const Json::Value& json) {
+JSONProcessor::SensorData ShellyPlusTemperatureNotificationProcessor::processStatus(const Json::Value& json) {
     bool mqttConnected = json["params"]["mqtt"]["connected"].asBool();
 
+    ShellyPlusTemperatureData temperatureData("stub", 0, 0, 0);
+    return temperatureData;
+    
     // For now, do nothing (Place Holder)
     // Print or process the extracted data
     //std::cout << "MQTT Connected: " << mqttConnected << std::endl;
 }
 
-void ShellyPlusTemperatureNotificationProcessor::processFullStatus(const Json::Value& json, const std::string& src) {
+JSONProcessor::SensorData ShellyPlusTemperatureNotificationProcessor::processFullStatus(const Json::Value& json, const std::string& src) {
     Json::Value devicePower = json["params"]["devicepower:0"];
     int id = devicePower["id"].asInt();
     Json::Value battery = devicePower["battery"];
@@ -56,6 +61,7 @@ void ShellyPlusTemperatureNotificationProcessor::processFullStatus(const Json::V
 
     ShellyPlusTemperatureData temperatureData(src, rh, tempC, ts);
     logData(temperatureData);
+    return temperatureData;
 }
 
 void ShellyPlusTemperatureNotificationProcessor::logData(ShellyPlusTemperatureData temperatureData) {
