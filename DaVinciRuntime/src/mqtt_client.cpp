@@ -1,14 +1,7 @@
 #include "mqtt_client.h"
 #include "JSONProcessorFactory.h"
 #include <iostream>
-
-// TODO: REMOVE
-// These are a stub for our future Database
-// Fixed-size ring buffers
-std::deque<ShellyPlusDimmerData> dimmer_buffer(100);
-std::deque<ShellyPlusPlugData> plug_buffer(100);
-std::deque<ShellyPlusTemperatureData> temperature_buffer(100);
-std::mutex buffer_mutex;
+#include "buffers.h"
 
 const std::string CLIENT_ID("DaVinciRuntime");
 

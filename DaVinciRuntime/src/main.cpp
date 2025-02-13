@@ -2,6 +2,7 @@
 #include <thread>
 #include "config.h"
 #include "mqtt_client.h"
+#include "davinci_server.h"
 
 int main(int argc, char** argv) {
 
@@ -24,11 +25,10 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    // TODO: Start the gRPC server in a separate thread
-    // std::thread grpcServerThread([&]() {
-    //     GRPCServer grpcServer(config.getGRPCPort());
-    //     grpcServer.start();
-    // });
+    // Start the gRPC server in a separate thread
+    std::thread grpcServerThread([&]() {
+        RunServer(std::to_string(config.getGRPCPort()));
+    });
 
     // Start the MQTT client in the main thread
     mqttClient.start();
@@ -39,6 +39,9 @@ int main(int argc, char** argv) {
     while(true) {
             //do nothing
     }
+
+    // Stop GRPCServer
+    grpcServerThread.~thread();
 
     // Disconnect From MQTT Client
     mqttClient.disconnect();
