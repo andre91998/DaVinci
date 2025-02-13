@@ -87,8 +87,16 @@ set(TEST_SOURCES
     test/test_mqtt_client.cpp
     test/test_json.cpp
     test/test_JSONProcessorFactory.cpp
+    test/test_ShellyPlusTemperatureNotificationProcessor.cpp
+    test/test_ShellyPlusTemperatureData.cpp
+    test/test_ShellyPlusPlugNotificationProcessor.cpp
+    test/test_ShellyPlusPlugData.cpp
+    test/test_ShellyPlusDimmerNotificationProcessor.cpp
+    test/test_ShellyPlusDimmerData.cpp
+    test/test_davinci_server.cpp
     src/mqtt_client.cpp  # Include implementation files required for tests
     src/config.cpp
+    src/davinci_server.cpp
     src/util/ShellyPlusDimmerData.cpp
     src/util/ShellyPlusPlugData.cpp
     src/util/ShellyPlusTemperatureData.cpp
