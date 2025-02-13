@@ -10,8 +10,8 @@ ShellyPlusPlugData::~ShellyPlusPlugData() {
     // Cleanup code here if needed
 }
 
-ShellyPlusPlugData::ShellyPlusPlugData(const std::string& source, double power, double timestamp)
-    : source_(source), power_(power), timestamp_(timestamp) {}
+ShellyPlusPlugData::ShellyPlusPlugData(const std::string& src, double power, double timestamp)
+    : source_(src), power_(power), timestamp_(timestamp) {}
 
 std::string ShellyPlusPlugData::getSource() const {
     return source_;

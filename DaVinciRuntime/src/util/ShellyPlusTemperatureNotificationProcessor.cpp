@@ -19,6 +19,8 @@ JSONProcessor::SensorData ShellyPlusTemperatureNotificationProcessor::process(co
     Json::Value params = json["params"];
     double ts = params["ts"].asDouble();
 
+    std::cout << "src: " << src << std::endl;
+
     // Handle different methods
     if (method == "NotifyFullStatus") {
         return processFullStatus(json, src);
@@ -58,6 +60,9 @@ JSONProcessor::SensorData ShellyPlusTemperatureNotificationProcessor::processFul
     double tempF = temperature["tF"].asDouble();
 
     double ts = json["params"]["ts"].asDouble();
+
+    std::cout << "src: " << src << std::endl;
+
 
     ShellyPlusTemperatureData temperatureData(src, rh, tempC, ts);
     logData(temperatureData);

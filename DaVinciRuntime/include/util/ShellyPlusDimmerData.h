@@ -21,7 +21,7 @@ public:
     void setTimestamp(double timestamp);
 
 private:
-    void setSource(const std::string& source);
+    void setSource(const std::string& src);
     std::string source_;
     int brightness_;
     bool state_;

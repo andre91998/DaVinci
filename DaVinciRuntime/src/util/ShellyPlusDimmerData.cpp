@@ -10,8 +10,8 @@ ShellyPlusDimmerData::~ShellyPlusDimmerData() {
     // Cleanup code here if needed
 }
 
-ShellyPlusDimmerData::ShellyPlusDimmerData(const std::string& source, int brightness, bool state, double timestamp)
-    : source_(source), brightness_(brightness), state_(state), timestamp_(timestamp) {}
+ShellyPlusDimmerData::ShellyPlusDimmerData(const std::string& src, int brightness, bool state, double timestamp)
+    : source_(src), brightness_(brightness), state_(state), timestamp_(timestamp) {}
 
 
 std::string ShellyPlusDimmerData::getSource() const {
@@ -34,8 +34,8 @@ void ShellyPlusDimmerData::setBrightness(int brightness) {
     brightness_ = brightness;
 }
 
-void ShellyPlusDimmerData::setSource(const std::string& source) {
-    source_ = source_;
+void ShellyPlusDimmerData::setSource(const std::string& src) {
+    source_ = src;
 }
 
 void ShellyPlusDimmerData::setState(bool state) {

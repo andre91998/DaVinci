@@ -11,9 +11,9 @@ ShellyPlusTemperatureData::~ShellyPlusTemperatureData() {
     // Cleanup code here if needed
 }
 
-ShellyPlusTemperatureData::ShellyPlusTemperatureData(const std::string& source, double temperature, 
-    double humidity, double timestamp)
-    : temperatureC_(temperature), humidity_(humidity), timestamp_(timestamp) {}
+ShellyPlusTemperatureData::ShellyPlusTemperatureData(const std::string& src, double humidity, 
+    double temperature, double timestamp)
+    : source_(src), temperatureC_(temperature), humidity_(humidity), timestamp_(timestamp) {}
 
 std::string ShellyPlusTemperatureData::getSource() const {
     return source_;
@@ -31,8 +31,8 @@ double ShellyPlusTemperatureData::getTimestamp() const {
     return timestamp_;
 }
 
-void ShellyPlusTemperatureData::setSource(const std::string& source) {
-    source_ = source;
+void ShellyPlusTemperatureData::setSource(const std::string& src) {
+    source_ = src;
 }
 void ShellyPlusTemperatureData::setTemperature(double temperature) {
     temperatureC_ = temperature;
