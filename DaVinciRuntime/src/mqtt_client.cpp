@@ -1,6 +1,7 @@
 #include "mqtt_client.h"
 #include "JSONProcessorFactory.h"
 #include <iostream>
+#include "buffers.h"
 
 const std::string CLIENT_ID("DaVinciRuntime");
 
@@ -72,7 +73,26 @@ void MQTTClient::on_message(const std::string& topic, const std::string& payload
         std::string errs;
         std::istringstream ss(payload);
         if (Json::parseFromStream(builder, ss, &json, &errs)) {
-            processor->process(json);
+            JSONProcessor::SensorData sensorData = processor->process(json);
+            if (processor->getType() == (int) SensorType::SHELLY_DIMMER) {
+                std::lock_guard<std::mutex> lock(buffer_mutex);
+                if (dimmer_buffer.size() >= 100) {
+                    dimmer_buffer.pop_front();
+                }
+                dimmer_buffer.push_back(std::get<ShellyPlusDimmerData>(sensorData));
+            } else if (processor->getType() == (int) SensorType::SHELLY_PLUG) {
+                std::lock_guard<std::mutex> lock(buffer_mutex);
+                if (plug_buffer.size() >= 100) {
+                    plug_buffer.pop_front();
+                }
+                plug_buffer.push_back(std::get<ShellyPlusPlugData>(sensorData));
+            } else if (processor->getType() == (int) SensorType::SHELLY_TEMP) {
+                std::lock_guard<std::mutex> lock(buffer_mutex);
+                if (temperature_buffer.size() >= 100) {
+                    temperature_buffer.pop_front();
+                }
+                temperature_buffer.push_back(std::get<ShellyPlusTemperatureData>(sensorData));
+            }
         } else {
             std::cerr << "Failed to parse JSON: " << errs << std::endl;
         }

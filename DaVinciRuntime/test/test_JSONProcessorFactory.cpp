@@ -5,7 +5,7 @@
 
 class MockJSONProcessor : public JSONProcessor {
 public:
-    MOCK_METHOD(void, process, (const Json::Value& json), (override));
+    MOCK_METHOD(JSONProcessor::SensorData, process, (const Json::Value& json), (override));
 };
 
 class JSONProcessorFactoryTest : public ::testing::Test {
