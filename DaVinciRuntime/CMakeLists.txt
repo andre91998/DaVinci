@@ -8,6 +8,16 @@ enable_testing()
 
 set(CMAKE_CXX_STANDARD 17)
 
+add_custom_target(coverage ALL
+        COMMAND ${CMAKE_COMMAND} -E make_directory coverage
+        COMMAND lcov --capture --directory . --output-file coverage/coverage.info --rc lcov_branch_coverage=1 --ignore-errors inconsistent,usage
+        COMMAND lcov --remove coverage/coverage.info '/usr/*' --output-file coverage/coverage.info
+        COMMAND lcov --list coverage/coverage.info
+        COMMAND genhtml coverage/coverage.info --output-directory coverage
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMENT "Generating code coverage report"
+)
+
 find_package(PahoMqttCpp REQUIRED)
 find_package(GTest REQUIRED)
 #find_package(GMock REQUIRED)
@@ -35,6 +45,10 @@ add_custom_command(
         --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
         "${dv_proto}"
       DEPENDS "${dv_proto}")
+
+# Enable code coverage
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 
 # Include directories
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -79,6 +93,7 @@ target_link_libraries(DaVinciRuntime
     PahoMqttCpp::paho-mqttpp3
     jsoncpp_lib
     dv_grpc_proto
+    pthread
 )
 
 # Test Source Files
@@ -118,6 +133,7 @@ target_link_libraries(runTests
     GTest::gtest_main
     GTest::gmock
     GTest::gmock_main
+    pthread
 )
 
 # Add tests

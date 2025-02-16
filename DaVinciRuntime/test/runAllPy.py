@@ -7,7 +7,7 @@ def run_scripts_in_directory(directory):
     files = os.listdir(directory)
     
     # Filter out only Python scripts
-    python_scripts = [f for f in files if f.endswith('.py') and f != 'runAllPy.py']
+    python_scripts = [f for f in files if f.endswith('.py') and f != 'runAllPy.py' and f != 'davinci_pb2.py' and f != 'davinci_pb2_grpc.py']
 
     
     # Dictionary to store the return codes

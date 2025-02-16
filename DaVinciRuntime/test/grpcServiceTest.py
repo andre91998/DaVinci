@@ -44,8 +44,8 @@ def run():
 if __name__ == '__main__':
     success = run()
     if success:
-        print("MQTT Sensor Enablement Test: PASSED!")
-        sys.exit(0)
-    else:
-        print("MQTT Sensor Enablement Test: FAILED!")
+        print("gRPC Service Availability Test: PASSED!")
         sys.exit(1)
+    else:
+        print("gRPC Service Availability Test: FAILED!")
+        sys.exit(0)

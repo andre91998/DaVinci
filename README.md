@@ -178,12 +178,20 @@ If you are also running on a aarch64 linux machine like the RPi 5, then all you 
 #### DaVinciHub
 
 ### Running Tests
-#### DaVinciRuntime
+#### DaVinci Runtime
 - **gTest Unit tests:** run the *runTests* executable that can be found in the *cmake/build* folder after compiling the DaVinciRuntime project:
-    - ```./cmake/build/runTests```
+    - Run all unit tests: ```./cmake/build/runTests```
 - **Python Integration tests**: run the *runAllPy.py* scripts in the tests directory:
-    - ``` python3 runAllPy.py```
-#### DaVinciHub
+    - Start the Runtime: ``` ./cmake/build/DaVinciRuntime```
+    - Enter the test directory: ``` cd DaVinciRuntime/test```
+    - Run all integration tests: ``` python3 runAllPy.py```
+#### DaVinci Hub
+
+### Viewing Code Coverage Reports
+#### DaVinci Runtime
+The code coverage reports are generated automatically when running the unit test suites. To view the report, open the *index.html* file in cmake/build/coverage
+
+#### DaVinci Hub
 
 
 ## Scripts and Utilities
