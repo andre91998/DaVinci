@@ -147,6 +147,12 @@ Run:
 sudo apt-get install  
 ```
 
+- **SQLite 3:**
+Run:
+```
+sudo apt-get install libsqlite3-dev
+```
+
 - **gTest:**
 Run:
 ```

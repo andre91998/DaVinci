@@ -3,6 +3,9 @@
 // Default constructor implementation
 ShellyPlusPlugData::ShellyPlusPlugData() {
     // Initialization code here if needed
+    source_ = "";
+    power_ = 0;
+    timestamp_ = 0;
 }
 
 // Default destructor definition

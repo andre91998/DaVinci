@@ -4,6 +4,10 @@
 // Default constructor implementation
 ShellyPlusTemperatureData::ShellyPlusTemperatureData() {
     // Initialization code here if needed
+    source_ = "";
+    temperatureC_ = 0;
+    humidity_ = 0;
+    timestamp_ = 0;
 }
 
 // Default destructor definition

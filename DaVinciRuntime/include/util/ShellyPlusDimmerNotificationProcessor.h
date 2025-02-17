@@ -17,7 +17,8 @@ public:
 
 private:
     void logData(ShellyPlusDimmerData shellyPlusDimmerData);
-    void logFullJSON(const Json::Value& json); //meant only for testing
+    void logFullJSON(const Json::Value& json); //meant only for debugging
+    friend class ShellyPlusDimmerNotificationProcessorTest;
 };
 
 #endif // SHELLY_PLUS_DIMMER_PROCESSOR_H

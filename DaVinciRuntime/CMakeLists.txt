@@ -8,17 +8,8 @@ enable_testing()
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_custom_target(coverage ALL
-        COMMAND ${CMAKE_COMMAND} -E make_directory coverage
-        COMMAND lcov --capture --directory . --output-file coverage/coverage.info --rc lcov_branch_coverage=1 --ignore-errors inconsistent,usage
-        COMMAND lcov --remove coverage/coverage.info '/usr/*' --output-file coverage/coverage.info
-        COMMAND lcov --list coverage/coverage.info
-        COMMAND genhtml coverage/coverage.info --output-directory coverage
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        COMMENT "Generating code coverage report"
-)
-
 find_package(PahoMqttCpp REQUIRED)
+find_package(SQLite3 REQUIRED)
 find_package(GTest REQUIRED)
 #find_package(GMock REQUIRED)
 
@@ -47,13 +38,14 @@ add_custom_command(
       DEPENDS "${dv_proto}")
 
 # Enable code coverage
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 
 # Include directories
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/util)
 include_directories(${JSONCPP_INCLUDE_DIRS})
+include_directories(${SQLite3_INCLUDE_DIRS})
 include_directories(${GTest_INCLUDE_DIRS})
 # Include generated *.pb.h files
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
@@ -75,6 +67,7 @@ set (SOURCES
     src/main.cpp
     src/mqtt_client.cpp
     src/config.cpp
+    src/database.cpp
     src/davinci_server.cpp
     src/util/ShellyPlusDimmerData.cpp
     src/util/ShellyPlusPlugData.cpp
@@ -82,7 +75,6 @@ set (SOURCES
     src/util/ShellyPlusDimmerNotificationProcessor.cpp
     src/util/ShellyPlusPlugNotificationProcessor.cpp
     src/util/ShellyPlusTemperatureNotificationProcessor.cpp
-    src/util/buffers.cpp
 )
 
 # Add Executable
@@ -91,6 +83,7 @@ add_executable(DaVinciRuntime ${SOURCES})
 # Link Libraries
 target_link_libraries(DaVinciRuntime 
     PahoMqttCpp::paho-mqttpp3
+    ${SQLite3_LIBRARIES}
     jsoncpp_lib
     dv_grpc_proto
     pthread
@@ -101,6 +94,7 @@ set(TEST_SOURCES
     test/test_main.cpp
     test/test_mqtt_client.cpp
     test/test_json.cpp
+    test/test_config.cpp
     test/test_JSONProcessorFactory.cpp
     test/test_ShellyPlusTemperatureNotificationProcessor.cpp
     test/test_ShellyPlusTemperatureData.cpp
@@ -112,13 +106,13 @@ set(TEST_SOURCES
     src/mqtt_client.cpp  # Include implementation files required for tests
     src/config.cpp
     src/davinci_server.cpp
+    src/database.cpp
     src/util/ShellyPlusDimmerData.cpp
     src/util/ShellyPlusPlugData.cpp
     src/util/ShellyPlusTemperatureData.cpp
     src/util/ShellyPlusDimmerNotificationProcessor.cpp
     src/util/ShellyPlusPlugNotificationProcessor.cpp
     src/util/ShellyPlusTemperatureNotificationProcessor.cpp
-    src/util/buffers.cpp
 )
 
 # Add test executable
@@ -127,6 +121,7 @@ add_executable(runTests ${TEST_SOURCES})
 # Link test libraries
 target_link_libraries(runTests
     PahoMqttCpp::paho-mqttpp3
+    ${SQLite3_LIBRARIES}
     jsoncpp_lib
     dv_grpc_proto    
     GTest::gtest
@@ -138,3 +133,14 @@ target_link_libraries(runTests
 
 # Add tests
 add_test(NAME runTests COMMAND runTests)
+
+# add_custom_target(coverage ALL
+#         COMMAND ${CMAKE_COMMAND} -E make_directory coverage
+#         COMMAND lcov --capture --directory . --output-file coverage/coverage.info --rc branch_coverage=1 --ignore-errors inconsistent,usage
+#         COMMAND lcov --remove coverage/coverage.info '/usr/*' --output-file coverage/coverage.info
+#         COMMAND lcov --list coverage/coverage.info
+#         COMMAND genhtml coverage/coverage.info --output-directory coverage
+#         DEPENDS runTests
+#         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+#         COMMENT "Generating code coverage report"
+# )

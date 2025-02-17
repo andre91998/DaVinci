@@ -17,7 +17,7 @@ public:
 
 private:
     void logData(ShellyPlusPlugData shellyPlusPlugData);
-    void logFullJSON(const Json::Value& json); //meant only for testing
+    void logFullJSON(const Json::Value& json); //meant only for debugging
 };
 
 #endif // SHELLY_PLUS_PLUG_PROCESSOR_H
