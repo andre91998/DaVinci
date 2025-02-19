@@ -103,6 +103,7 @@ set(TEST_SOURCES
     test/test_ShellyPlusDimmerNotificationProcessor.cpp
     test/test_ShellyPlusDimmerData.cpp
     test/test_davinci_server.cpp
+    test/test_database.cpp
     src/mqtt_client.cpp  # Include implementation files required for tests
     src/config.cpp
     src/davinci_server.cpp
