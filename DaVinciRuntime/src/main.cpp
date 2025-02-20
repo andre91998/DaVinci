@@ -4,10 +4,12 @@
 #include "mqtt_client.h"
 #include "davinci_server.h"
 
+#define CONFIG_PATH "/usr/config/DaVinci/config.json"
+
 int main(int argc, char** argv) {
 
     Config config;
-    if (!config.load("/usr/config/DaVinci/config.json")) {
+    if (!config.load(CONFIG_PATH)) {
         std::cerr << "Failed to load configuration" << std::endl;
         return 1;
     }

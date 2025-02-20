@@ -66,3 +66,15 @@ std::vector<std::vector<std::string>> Database::query(const std::string& query) 
     sqlite3_finalize(stmt);
     return result;
 }
+
+void Database::createTables() {
+    std::vector<std::string> table_creation_queries = {
+        "CREATE TABLE IF NOT EXISTS dimmer_data (id INTEGER PRIMARY KEY, source TEXT, brightness INTEGER, state BOOLEAN, timestamp REAL);",
+        "CREATE TABLE IF NOT EXISTS plug_data (id INTEGER PRIMARY KEY, source TEXT, power REAL, timestamp REAL);",
+        "CREATE TABLE IF NOT EXISTS temperature_data (id INTEGER PRIMARY KEY, source TEXT, humidity REAL, temperature REAL, timestamp REAL);"
+    };
+
+    for (const auto& query : table_creation_queries) {
+        execute(query);
+    }
+}
