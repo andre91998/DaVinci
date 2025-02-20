@@ -16,6 +16,7 @@ public:
 private:
     Database(const std::string& db_path); // Private constructor
     ~Database();
+    createTables();
 
     static Database* instance;
     sqlite3* db_;
