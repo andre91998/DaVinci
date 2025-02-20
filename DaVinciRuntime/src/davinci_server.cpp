@@ -9,6 +9,7 @@
 #include "ShellyPlusPlugData.h"
 #include "ShellyPlusTemperatureData.h"
 #include "davinci_server.h"
+#include "sensor_types.h"
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -26,6 +27,26 @@ using daVinciRPC::RPC_ShellyPlusTemperatureData;
 std::unique_ptr<Server> server;
 
 DaVinciServiceImpl::DaVinciServiceImpl(Database* db) : db_(db) {}
+
+grpc::Status DaVinciServiceImpl::GetSupportedSensorTypes(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_SupportedSensorTypes* response) {
+    std::vector<SensorType> sensor_types = {SensorType::SHELLY_TEMP, SensorType::SHELLY_DIMMER, SensorType::SHELLY_PLUG};
+    for (const auto& type : sensor_types) {
+        std::string type_str;
+        switch (type) {
+            case SensorType::SHELLY_TEMP:
+                type_str = "ShellyPlusTemperature";
+                break;
+            case SensorType::SHELLY_DIMMER:
+                type_str = "ShellyPlusDimmer";
+                break;
+            case SensorType::SHELLY_PLUG:
+                type_str = "ShellyPlusPlug";
+                break;
+        }
+        response->add_sensor_types(type_str);
+    }
+    return Status::OK;
+}
 
 grpc::Status DaVinciServiceImpl::GetDimmerData(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_DimmerDataArray* response) {
     auto rows = db_->query("SELECT source, brightness, state, timestamp FROM DimmerData");
