@@ -23,6 +23,7 @@ Database::~Database() {
 Database* Database::getInstance(const std::string& db_path) {
     if (instance == nullptr) {
         instance = new Database(db_path);
+        instance->createTables();
     }
     return instance;
 }
@@ -69,9 +70,9 @@ std::vector<std::vector<std::string>> Database::query(const std::string& query) 
 
 void Database::createTables() {
     std::vector<std::string> table_creation_queries = {
-        "CREATE TABLE IF NOT EXISTS dimmer_data (id INTEGER PRIMARY KEY, source TEXT, brightness INTEGER, state BOOLEAN, timestamp REAL);",
-        "CREATE TABLE IF NOT EXISTS plug_data (id INTEGER PRIMARY KEY, source TEXT, power REAL, timestamp REAL);",
-        "CREATE TABLE IF NOT EXISTS temperature_data (id INTEGER PRIMARY KEY, source TEXT, humidity REAL, temperature REAL, timestamp REAL);"
+        "CREATE TABLE IF NOT EXISTS shellyDimmerData (id INTEGER PRIMARY KEY, source TEXT, brightness INTEGER, state BOOLEAN, timestamp REAL);",
+        "CREATE TABLE IF NOT EXISTS shellyPlugData (id INTEGER PRIMARY KEY, source TEXT, power REAL, timestamp REAL);",
+        "CREATE TABLE IF NOT EXISTS shellyTemperatureData (id INTEGER PRIMARY KEY, source TEXT, humidity REAL, temperature REAL, timestamp REAL);"
     };
 
     for (const auto& query : table_creation_queries) {

@@ -45,9 +45,9 @@ def main():
             return_code = 0
 
     if return_code == 0:
-        print("MQTT Sensor Enablement Test: FAILED!")
+        print("MQTT Sensor Connection Test: FAILED!")
     else:
-        print("MQTT Sensor Enablement Test: PASSED!")
+        print("MQTT Sensor Connection Test: PASSED!")
     sys.exit(return_code)
 
 if __name__ == "__main__":

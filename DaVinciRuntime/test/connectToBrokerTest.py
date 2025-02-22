@@ -28,7 +28,7 @@ def main():
             print("Connected to broker")
             client.subscribe(topic)
             clientConnected = True
-            print("MQTT Sensor Enablement Test: PASSED!")
+            print("Connect to Broker Test: PASSED!")
         else:
             print(f"Connection failed with code {rc}")
 
@@ -53,7 +53,7 @@ def main():
             break
 
     if not clientConnected:
-        print("MQTT Sensor Enablement Test: FAILED!")
+        print("Connect to Broker Test: FAILED!")
 
     # Stop the loop
     client.loop_stop()

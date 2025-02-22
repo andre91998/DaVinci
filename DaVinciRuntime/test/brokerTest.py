@@ -37,7 +37,7 @@ def main():
     # Callback function when a message is received
     def on_message(client, userdata, message):
         print(f"Message received: {message.payload.decode()} on topic {message.topic}")
-        print("MQTT Sensor Enablement Test: PASSED!")
+        print("MQTT Broker Enablement Test: PASSED!")
         global msgReceived
         msgReceived = True
 
@@ -74,7 +74,7 @@ def main():
             break
 
     if not msgReceived:
-        print("MQTT Sensor Enablement Test: FAILED!")
+        print("MQTT Broker Enablement Test: FAILED!")
 
     # Stop the loop
     client.loop_stop()
