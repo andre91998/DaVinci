@@ -106,6 +106,38 @@ sudo mkdir /usr/config/DaVinci
 
 and then place your *config.json* file in that directory.
 
+**Enabling the Runtime to start automatically on boot:**
+
+```
+cd /etc/systemd/system
+sudo touch davinci_runtime.service
+vim davinci_runtime.service
+```
+Place the following contents into the *davinci_runtime.service* file:
+
+```
+Description=DaVinci Runtime
+After=network.target
+
+[Service]
+ExecStart=/path/to/your/executable/DaVinciRuntime
+WorkingDirectory=/path/to/your/executable/
+User=<your_username>
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Now, run the following commands:
+
+```
+sudo systemctl enable davinci_runtime.service
+sudo systemctl start davinci_runtime.service
+```
+
+After this process is completed, you can now also use the *daVinciRuntime\*.sh* scripts in the project's /Scripts directory to interact with the running systemctl davinci_runtime process!
+
 ### Running the DaVinci Hub
 
 ## Building From Source
