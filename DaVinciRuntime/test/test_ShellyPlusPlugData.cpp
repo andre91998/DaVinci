@@ -1,6 +1,13 @@
 #include <gtest/gtest.h>
 #include "ShellyPlusPlugData.h"
 
+TEST(ShellyPlusPlugDataTest, DefaultConstructor) {
+    ShellyPlusPlugData plugData;
+    EXPECT_EQ(plugData.getSource(), "");
+    EXPECT_EQ(plugData.getPower(), 0);
+    EXPECT_EQ(plugData.getTimestamp(), 0);
+}
+
 TEST(ShellyPlusPlugDataTest, Constructor) {
     ShellyPlusPlugData data("source1", 100.0, 1234567890);
 

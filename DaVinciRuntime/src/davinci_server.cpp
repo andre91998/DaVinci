@@ -8,8 +8,8 @@
 #include "ShellyPlusDimmerData.h"
 #include "ShellyPlusPlugData.h"
 #include "ShellyPlusTemperatureData.h"
-#include "buffers.h"
 #include "davinci_server.h"
+#include "sensor_types.h"
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -26,44 +26,81 @@ using daVinciRPC::RPC_ShellyPlusTemperatureData;
 
 std::unique_ptr<Server> server;
 
-Status DaVinciServiceImpl::GetDimmerData(ServerContext* context, const Empty* request, RPC_DimmerDataArray* response) {
-    std::lock_guard<std::mutex> lock(buffer_mutex);
-    for (const auto& data : dimmer_buffer) {
-        auto* new_data = response->add_dimmer_data();
-        new_data->set_source(data.getSource());
-        new_data->set_brightness(data.getBrightness());
-        new_data->set_state(data.getState());
-        new_data->set_timestamp(data.getTimestamp());
+DaVinciServiceImpl::DaVinciServiceImpl(Database* db) : db_(db) {}
+
+grpc::Status DaVinciServiceImpl::GetSupportedSensorTypes(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_SupportedSensorTypes* response) {
+    std::vector<SensorType> sensor_types = {SensorType::SHELLY_TEMP, SensorType::SHELLY_DIMMER, SensorType::SHELLY_PLUG};
+    for (const auto& type : sensor_types) {
+        std::string type_str;
+        switch (type) {
+            case SensorType::SHELLY_TEMP:
+                type_str = "ShellyPlusTemperature";
+                break;
+            case SensorType::SHELLY_DIMMER:
+                type_str = "ShellyPlusDimmer";
+                break;
+            case SensorType::SHELLY_PLUG:
+                type_str = "ShellyPlusPlug";
+                break;
+        }
+        response->add_sensor_types(type_str);
     }
     return Status::OK;
 }
 
-Status DaVinciServiceImpl::GetPlugData(ServerContext* context, const Empty* request, RPC_PlugDataArray* response) {
-    std::lock_guard<std::mutex> lock(buffer_mutex);
-    for (const auto& data : plug_buffer) {
-        auto* new_data = response->add_plug_data();
-        new_data->set_source(data.getSource());
-        new_data->set_power(data.getPower());
-        new_data->set_timestamp(data.getTimestamp());
+grpc::Status DaVinciServiceImpl::GetDimmerData(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_DimmerDataArray* response) {
+    try {
+        auto rows = db_->query("SELECT source, brightness, state, timestamp FROM dimmerData");
+        for (const auto& row : rows) {
+            auto* data = response->add_dimmer_data();
+            data->set_source(row[0]);
+            data->set_brightness(std::stoi(row[1]));
+            data->set_state(std::stoi(row[2]));
+            data->set_timestamp(std::stoll(row[3]));
+        }
+        return grpc::Status::OK;
+    } catch (const std::exception& e) {
+        std::cerr << "Error in GetDimmerData: " << e.what() << std::endl;
+        return grpc::Status(grpc::StatusCode::INTERNAL, e.what());
     }
-    return Status::OK;
 }
 
-Status DaVinciServiceImpl::GetTemperatureData(ServerContext* context, const Empty* request, RPC_TemperatureDataArray* response) {
-    std::lock_guard<std::mutex> lock(buffer_mutex);
-    for (const auto& data : temperature_buffer) {
-        auto* new_data = response->add_temperature_data();
-        new_data->set_source(data.getSource());
-        new_data->set_humidity(data.getHumidity());
-        new_data->set_temperature(data.getTemperature());
-        new_data->set_timestamp(data.getTimestamp());
+grpc::Status DaVinciServiceImpl::GetPlugData(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_PlugDataArray* response) {
+    try {
+        auto rows = db_->query("SELECT source, power, timestamp FROM plugData");
+        for (const auto& row : rows) {
+            auto* data = response->add_plug_data();
+            data->set_source(row[0]);
+            data->set_power(std::stod(row[1]));
+            data->set_timestamp(std::stoll(row[2]));
+        }
+        return grpc::Status::OK;
+    } catch (const std::exception& e) {
+        std::cerr << "Error in GetPlugData: " << e.what() << std::endl;
+        return grpc::Status(grpc::StatusCode::INTERNAL, e.what());
     }
-    return Status::OK;
 }
 
-void RunServer(const std::string& port) {
+grpc::Status DaVinciServiceImpl::GetTemperatureData(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_TemperatureDataArray* response) {
+    try {
+        auto rows = db_->query("SELECT source, temperature, humidity, timestamp FROM temperatureData");
+        for (const auto& row : rows) {
+            auto* data = response->add_temperature_data();
+            data->set_source(row[0]);
+            data->set_temperature(std::stod(row[1]));
+            data->set_humidity(std::stod(row[2]));
+            data->set_timestamp(std::stoll(row[3]));
+        }
+        return grpc::Status::OK;
+    } catch (const std::exception& e) {
+        std::cerr << "Error in GetTemperatureData: " << e.what() << std::endl;
+        return grpc::Status(grpc::StatusCode::INTERNAL, e.what());
+    }
+}
+
+void RunServer(const std::string& port, Database* db) {
     std::string server_address("0.0.0.0:50051");
-    DaVinciServiceImpl service;
+    DaVinciServiceImpl service(db);
 
     ServerBuilder builder;
     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());

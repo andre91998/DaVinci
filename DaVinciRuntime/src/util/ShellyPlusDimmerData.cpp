@@ -3,6 +3,10 @@
 // Default constructor implementation
 ShellyPlusDimmerData::ShellyPlusDimmerData() {
     // Initialization code here if needed
+    source_ = "";
+    brightness_ = 0;
+    state_ = false;
+    timestamp_ = 0;
 }
 
 // Default destructor definition

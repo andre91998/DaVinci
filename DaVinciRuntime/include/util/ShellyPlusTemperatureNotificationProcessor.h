@@ -19,7 +19,7 @@ private:
 JSONProcessor::SensorData processStatus(const Json::Value& json);
     JSONProcessor::SensorData processFullStatus(const Json::Value& json, const std::string& src);
     void logData(ShellyPlusTemperatureData ShellyPlusTemperatureData);
-    void logFullJSON(const Json::Value& json); //meant only for testing
+    void logFullJSON(const Json::Value& json); //meant only for debugging
 };
 
 #endif // SHELLY_PLUS_TEMPERATURE_PROCESSOR_H

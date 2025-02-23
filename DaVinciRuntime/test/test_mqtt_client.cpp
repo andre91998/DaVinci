@@ -1,72 +1,78 @@
 #include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#include <mqtt/client.h>
+#include <thread>
+#include <filesystem>
 #include "mqtt_client.h"
-#include "JSONProcessorFactory.h"
-#include <string>
-#include <vector>
-
-using ::testing::_;
-using ::testing::Invoke;
-
-class MockMQTTClientCallback : public MQTTClientCallback {
-public:
-    MockMQTTClientCallback(MQTTClient* client) : MQTTClientCallback(client) {}
-
-    MOCK_METHOD1(message_arrived, void(mqtt::const_message_ptr msg));
-};
-
-class MockMQTTClient : public MQTTClient {
-public:
-    MockMQTTClient(const std::string& broker, int port, const std::vector<std::string>& topics)
-        : MQTTClient(broker, port, topics) {}
-
-    MOCK_METHOD0(on_connect, void());
-    MOCK_METHOD0(on_disconnect, void());
-    MOCK_METHOD2(on_message, void(const std::string& topic, const std::string& payload));
-};
+#include "database.h"
 
 class MQTTClientTest : public ::testing::Test {
 protected:
-    MockMQTTClient* client;
-    MockMQTTClientCallback* callback;
-
     void SetUp() override {
-        client = new MockMQTTClient("broker.hivemq.com", 1883, {"test/topic"});
-        callback = new MockMQTTClientCallback(client);
+        // Create a test database
+        test_db_path = "test_mqtt_client.db";
+        // Use getInstance method to get the Database instance
+        db = Database::getInstance(test_db_path);
+
+        // Initialize the database with some test data
+        db->execute("CREATE TABLE IF NOT EXISTS DimmerData (source TEXT, brightness INTEGER, state INTEGER, timestamp INTEGER)");
+        db->execute("CREATE TABLE IF NOT EXISTS PlugData (source TEXT, power REAL, timestamp INTEGER)");
+        db->execute("CREATE TABLE IF NOT EXISTS TemperatureData (source TEXT, temperature REAL, humidity REAL, timestamp INTEGER)");
+
+        db->execute("INSERT INTO DimmerData (source, brightness, state, timestamp) VALUES ('source1', 50, 1, 1234567890)");
+        db->execute("INSERT INTO PlugData (source, power, timestamp) VALUES ('source1', 100.0, 1234567890)");
+        db->execute("INSERT INTO TemperatureData (source, temperature, humidity, timestamp) VALUES ('source1', 25.0, 60.0, 1234567890)");
+
+        // Initialize the MQTT client
+        mqtt_client = new MQTTClient("broker.hivemq.com", 1883, {"test/topic"}, test_db_path);
     }
 
     void TearDown() override {
-        delete client;
-        delete callback;
+        // Cleanup
+        delete mqtt_client;
+        db->destroyInstance();
+        std::filesystem::remove(test_db_path);
     }
+
+    Database* db;
+    MQTTClient* mqtt_client;
+    std::string test_db_path;
 };
 
-// TEST_F(MQTTClientTest, ConnectSuccess) {
-//     EXPECT_CALL(*client, on_connect()).Times(1);
-//     EXPECT_TRUE(client->connect());
-// }
-
-TEST_F(MQTTClientTest, ConnectFailure) {
-    // Simulate a connection failure by setting an invalid broker address
-    MockMQTTClient invalidClient("invalid_broker", 1883, {"test/topic"});
-    EXPECT_CALL(invalidClient, on_connect()).Times(0);
-    EXPECT_FALSE(invalidClient.connect());
+TEST_F(MQTTClientTest, Connect) {
+    ASSERT_TRUE(mqtt_client->connect());
 }
 
-// TEST_F(MQTTClientTest, DisconnectSuccess) {
-//     EXPECT_CALL(*client, on_disconnect()).Times(1);
-//     client->connect();
-//     client->disconnect();
-// }
+TEST_F(MQTTClientTest, ConnectFailure) {
+    MQTTClient faulty_client("tcp://invalid_host", 1883, {"test/topic"}, test_db_path);
+    ASSERT_FALSE(faulty_client.connect());
+}
 
-// TEST_F(MQTTClientTest, MessageArrived) {
-//     mqtt::const_message_ptr msg = mqtt::make_message("test/topic", "payload");
-//     EXPECT_CALL(*client, on_message("test/topic", "payload")).Times(1);
-//     callback->message_arrived(msg);
-// }
+TEST_F(MQTTClientTest, Disconnect) {
+    mqtt_client->connect();
+    mqtt_client->disconnect();
+    SUCCEED();
+}
+
+TEST_F(MQTTClientTest, StartStop) {
+    mqtt_client->connect();
+    mqtt_client->start();
+    mqtt_client->stop();
+    mqtt_client->disconnect();
+    SUCCEED();
+}
 
 TEST_F(MQTTClientTest, StartAndStop) {
-    client->connect();
-    client->start();
-    client->stop();
+    mqtt_client->connect();
+    mqtt_client->start();
+    mqtt_client->stop();
+    SUCCEED();
+}
+
+TEST_F(MQTTClientTest, OnMessage) {
+    mqtt_client->connect();
+    mqtt_client->start();
+    mqtt_client->on_message("test/topic", "{\"source\":\"source1\", \"brightness\":75, \"state\":1, \"timestamp\":1234567890}");
+    mqtt_client->stop();
+    mqtt_client->disconnect();
+    SUCCEED();
 }

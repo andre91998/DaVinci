@@ -1,11 +1,19 @@
 #include "mqtt_client.h"
 #include "JSONProcessorFactory.h"
 #include <iostream>
-#include "buffers.h"
+//#include "buffers.h"
 
 const std::string CLIENT_ID("DaVinciRuntime");
 
 MQTTClientCallback::MQTTClientCallback(MQTTClient* client) : client_(client) {}
+
+// void MQTTClientCallback::connected(const std::string& cause) {
+//     std::cout << cause << std::endl;
+// }
+
+// void MQTTClientCallback::connection_lost(const std::string& cause) {
+//     std::cout << cause << std::endl;
+// }
 
 void MQTTClientCallback::message_arrived(mqtt::const_message_ptr msg) {
     if (client_) {
@@ -13,8 +21,12 @@ void MQTTClientCallback::message_arrived(mqtt::const_message_ptr msg) {
     }
 }
 
-MQTTClient::MQTTClient(const std::string& broker, int port, const std::vector<std::string>& topics)
-    : broker_(broker), port_(port), topics_(topics), client_(nullptr), callback_(nullptr), processorFactory_(new JSONProcessorFactory()) {}
+// void MQTTClientCallback::delivery_complete(mqtt::delivery_token_ptr token) {
+//     std::cout << "onDeliveryComplete()" << std::endl;
+// }
+
+MQTTClient::MQTTClient(const std::string& broker, int port, const std::vector<std::string>& topics,  const std::string& db)
+    : broker_(broker), port_(port), topics_(topics), client_(nullptr), callback_(nullptr), processorFactory_(new JSONProcessorFactory()), db_((Database::getInstance(db))) {}
 
 MQTTClient::~MQTTClient() {
     if (client_) {
@@ -75,23 +87,25 @@ void MQTTClient::on_message(const std::string& topic, const std::string& payload
         if (Json::parseFromStream(builder, ss, &json, &errs)) {
             JSONProcessor::SensorData sensorData = processor->process(json);
             if (processor->getType() == (int) SensorType::SHELLY_DIMMER) {
-                std::lock_guard<std::mutex> lock(buffer_mutex);
-                if (dimmer_buffer.size() >= 100) {
-                    dimmer_buffer.pop_front();
-                }
-                dimmer_buffer.push_back(std::get<ShellyPlusDimmerData>(sensorData));
+                auto data = std::get<ShellyPlusDimmerData>(sensorData);
+                db_->execute("INSERT INTO shellyDimmerData (source, brightness, state, timestamp) VALUES ('" +
+                            data.getSource() + "', " +
+                            std::to_string(data.getBrightness()) + ", " +
+                            std::to_string(data.getState()) + ", " +
+                            std::to_string(data.getTimestamp()) + ")");
             } else if (processor->getType() == (int) SensorType::SHELLY_PLUG) {
-                std::lock_guard<std::mutex> lock(buffer_mutex);
-                if (plug_buffer.size() >= 100) {
-                    plug_buffer.pop_front();
-                }
-                plug_buffer.push_back(std::get<ShellyPlusPlugData>(sensorData));
+                auto data = std::get<ShellyPlusPlugData>(sensorData);
+                db_->execute("INSERT INTO shellyPlugData (source, power, timestamp) VALUES ('" +
+                            data.getSource() + "', " +
+                            std::to_string(data.getPower()) + ", " +
+                            std::to_string(data.getTimestamp()) + ")");
             } else if (processor->getType() == (int) SensorType::SHELLY_TEMP) {
-                std::lock_guard<std::mutex> lock(buffer_mutex);
-                if (temperature_buffer.size() >= 100) {
-                    temperature_buffer.pop_front();
-                }
-                temperature_buffer.push_back(std::get<ShellyPlusTemperatureData>(sensorData));
+                auto data = std::get<ShellyPlusTemperatureData>(sensorData);
+                db_->execute("INSERT INTO shellyTemperatureData (source, temperature, humidity, timestamp) VALUES ('" +
+                            data.getSource() + "', " +
+                            std::to_string(data.getTemperature()) + ", " +
+                            std::to_string(data.getHumidity()) + ", " +
+                            std::to_string(data.getTimestamp()) + ")");
             }
         } else {
             std::cerr << "Failed to parse JSON: " << errs << std::endl;

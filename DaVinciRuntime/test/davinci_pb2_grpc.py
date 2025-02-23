@@ -34,6 +34,11 @@ class DaVinciServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.GetSupportedSensorTypes = channel.unary_unary(
+                '/daVinciRPC.DaVinciService/GetSupportedSensorTypes',
+                request_serializer=davinci__pb2.Empty.SerializeToString,
+                response_deserializer=davinci__pb2.RPC_SupportedSensorTypes.FromString,
+                _registered_method=True)
         self.GetDimmerData = channel.unary_unary(
                 '/daVinciRPC.DaVinciService/GetDimmerData',
                 request_serializer=davinci__pb2.Empty.SerializeToString,
@@ -53,6 +58,12 @@ class DaVinciServiceStub(object):
 
 class DaVinciServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
+
+    def GetSupportedSensorTypes(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def GetDimmerData(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -75,6 +86,11 @@ class DaVinciServiceServicer(object):
 
 def add_DaVinciServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'GetSupportedSensorTypes': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSupportedSensorTypes,
+                    request_deserializer=davinci__pb2.Empty.FromString,
+                    response_serializer=davinci__pb2.RPC_SupportedSensorTypes.SerializeToString,
+            ),
             'GetDimmerData': grpc.unary_unary_rpc_method_handler(
                     servicer.GetDimmerData,
                     request_deserializer=davinci__pb2.Empty.FromString,
@@ -100,6 +116,33 @@ def add_DaVinciServiceServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class DaVinciService(object):
     """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def GetSupportedSensorTypes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/daVinciRPC.DaVinciService/GetSupportedSensorTypes',
+            davinci__pb2.Empty.SerializeToString,
+            davinci__pb2.RPC_SupportedSensorTypes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
 
     @staticmethod
     def GetDimmerData(request,
