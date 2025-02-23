@@ -67,6 +67,19 @@ TEST_F(DaVinciServiceTest, GetTemperatureData) {
     ASSERT_EQ(response.temperature_data_size(), 1);
 }
 
+TEST_F(DaVinciServiceTest, GetSupportedSensorTypes) {
+    grpc::ServerContext context;
+    daVinciRPC::Empty request;
+    daVinciRPC::RPC_SupportedSensorTypes response;
+
+    grpc::Status status = service->GetSupportedSensorTypes(&context, &request, &response);
+    ASSERT_TRUE(status.ok());
+    ASSERT_EQ(response.sensor_types_size(), 3);
+    EXPECT_EQ(response.sensor_types(0), "ShellyPlusTemperature");
+    EXPECT_EQ(response.sensor_types(1), "ShellyPlusDimmer");
+    EXPECT_EQ(response.sensor_types(2), "ShellyPlusPlug");
+}
+
 TEST_F(DaVinciServiceTest, RunServer) {
     std::thread server_thread([this]() {
         RunServer("50051", db);

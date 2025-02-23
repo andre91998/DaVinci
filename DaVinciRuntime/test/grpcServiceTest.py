@@ -1,52 +1,69 @@
 import grpc
+import logging
 import sys
-import os
-import davinci_pb2
-import davinci_pb2_grpc
 
-def get_dimmer_data(stub):
-    request = davinci_pb2.Empty()
-    response = stub.GetDimmerData(request)
-    if not response.dimmer_data:
-        return False
-    return True
+# Import the generated classes
+import davinci_pb2 as pb2
+import davinci_pb2_grpc as pb2_grpc
 
-def get_plug_data(stub):
-    request = davinci_pb2.Empty()
-    response = stub.GetPlugData(request)
-    if not response.plug_data:
-        return False
-    return True
+# Configure logging
+logging.basicConfig(level=logging.INFO)
 
-def get_temperature_data(stub):
-    request = davinci_pb2.Empty()
-    response = stub.GetTemperatureData(request)
-    if not response.temperature_data:
-        return False
-    return True
-
-def run():
+def test_dimmer_data(stub):
     try:
-        channel = grpc.insecure_channel('localhost:50051')
-        stub = davinci_pb2_grpc.DaVinciServiceStub(channel)
-        
-        if not get_dimmer_data(stub):
-            return False
-        if not get_plug_data(stub):
-            return False
-        if not get_temperature_data(stub):
-            return False
-            
+        request = pb2.Empty()
+        response = stub.GetDimmerData(request)
+        logging.info(f"GetDimmerData response: {response}")
         return True
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    except grpc.RpcError as e:
+        logging.error(f"An error occurred during GetDimmerData: {e.details()}")
+        logging.error(f"Error code: {e.code()}")
+        logging.error(f"Debug details: {e.debug_error_string()}")
         return False
 
-if __name__ == '__main__':
-    success = run()
-    if success:
-        print("gRPC Service Availability Test: PASSED!")
-        sys.exit(1)
-    else:
-        print("gRPC Service Availability Test: FAILED!")
+def test_plug_data(stub):
+    try:
+        request = pb2.Empty()
+        response = stub.GetPlugData(request)
+        logging.info(f"GetPlugData response: {response}")
+        return True
+    except grpc.RpcError as e:
+        logging.error(f"An error occurred during GetPlugData: {e.details()}")
+        logging.error(f"Error code: {e.code()}")
+        logging.error(f"Debug details: {e.debug_error_string()}")
+        return False
+
+def test_temperature_data(stub):
+    try:
+        request = pb2.Empty()
+        response = stub.GetTemperatureData(request)
+        logging.info(f"GetTemperatureData response: {response}")
+        return True
+    except grpc.RpcError as e:
+        logging.error(f"An error occurred during GetTemperatureData: {e.details()}")
+        logging.error(f"Error code: {e.code()}")
+        logging.error(f"Debug details: {e.debug_error_string()}")
+        return False
+
+def main():
+    grpc_server = "localhost:50051"  # Update with the actual gRPC server address
+
+    # Create a channel and stub
+    channel = grpc.insecure_channel(grpc_server)
+    stub = pb2_grpc.DaVinciServiceStub(channel)
+
+    # Run tests
+    dimmer_data_test = test_dimmer_data(stub)
+    plug_data_test = test_plug_data(stub)
+    temperature_data_test = test_temperature_data(stub)
+
+    # Check results
+    if dimmer_data_test and plug_data_test and temperature_data_test:
+        logging.info("All gRPC Service Tests: PASSED!")
         sys.exit(0)
+    else:
+        logging.info("One or more gRPC Service Tests: FAILED!")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()

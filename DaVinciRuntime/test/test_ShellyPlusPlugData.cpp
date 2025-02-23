@@ -1,6 +1,23 @@
 #include <gtest/gtest.h>
 #include "ShellyPlusPlugData.h"
 
+TEST(ShellyPlusPlugDataTest, DefaultConstructor) {
+    ShellyPlusPlugData plugData;
+    EXPECT_EQ(plugData.getSource(), "");
+    EXPECT_EQ(plugData.getPower(), 0);
+    EXPECT_EQ(plugData.getTimestamp(), 0);
+}
+
+TEST(ShellyPlusPlugDataTest, ParameterizedConstructor) {
+    std::string source = "test_source";
+    double power = 100.5;
+    double timestamp = 1617181910.0;
+    ShellyPlusPlugData plugData(source, power, timestamp);
+    EXPECT_EQ(plugData.getSource(), source);
+    EXPECT_EQ(plugData.getPower(), power);
+    EXPECT_EQ(plugData.getTimestamp(), timestamp);
+}
+
 TEST(ShellyPlusPlugDataTest, Constructor) {
     ShellyPlusPlugData data("source1", 100.0, 1234567890);
 

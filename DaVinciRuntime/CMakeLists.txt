@@ -135,13 +135,13 @@ target_link_libraries(runTests
 # Add tests
 add_test(NAME runTests COMMAND runTests)
 
-# add_custom_target(coverage ALL
-#         COMMAND ${CMAKE_COMMAND} -E make_directory coverage
-#         COMMAND lcov --capture --directory . --output-file coverage/coverage.info --rc branch_coverage=1 --ignore-errors inconsistent,usage
-#         COMMAND lcov --remove coverage/coverage.info '/usr/*' --output-file coverage/coverage.info
-#         COMMAND lcov --list coverage/coverage.info
-#         COMMAND genhtml coverage/coverage.info --output-directory coverage
-#         DEPENDS runTests
-#         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-#         COMMENT "Generating code coverage report"
-# )
+add_custom_target(coverage ALL
+        COMMAND ${CMAKE_COMMAND} -E make_directory coverage
+        COMMAND lcov --capture --directory . --output-file coverage/coverage.info --rc branch_coverage=1 --ignore-errors gcov,inconsistent,usage
+        COMMAND lcov --remove coverage/coverage.info '/usr/*' --output-file coverage/coverage.info
+        COMMAND lcov --list coverage/coverage.info
+        COMMAND genhtml coverage/coverage.info --output-directory coverage
+        DEPENDS runTests
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMENT "Generating code coverage report"
+)

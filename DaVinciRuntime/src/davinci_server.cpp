@@ -49,38 +49,53 @@ grpc::Status DaVinciServiceImpl::GetSupportedSensorTypes(grpc::ServerContext* co
 }
 
 grpc::Status DaVinciServiceImpl::GetDimmerData(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_DimmerDataArray* response) {
-    auto rows = db_->query("SELECT source, brightness, state, timestamp FROM DimmerData");
-    for (const auto& row : rows) {
-        auto* data = response->add_dimmer_data();
-        data->set_source(row[0]);
-        data->set_brightness(std::stoi(row[1]));
-        data->set_state(std::stoi(row[2]));
-        data->set_timestamp(std::stoll(row[3]));
+    try {
+        auto rows = db_->query("SELECT source, brightness, state, timestamp FROM dimmerData");
+        for (const auto& row : rows) {
+            auto* data = response->add_dimmer_data();
+            data->set_source(row[0]);
+            data->set_brightness(std::stoi(row[1]));
+            data->set_state(std::stoi(row[2]));
+            data->set_timestamp(std::stoll(row[3]));
+        }
+        return grpc::Status::OK;
+    } catch (const std::exception& e) {
+        std::cerr << "Error in GetDimmerData: " << e.what() << std::endl;
+        return grpc::Status(grpc::StatusCode::INTERNAL, e.what());
     }
-    return grpc::Status::OK;
 }
 
 grpc::Status DaVinciServiceImpl::GetPlugData(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_PlugDataArray* response) {
-    auto rows = db_->query("SELECT source, power, timestamp FROM PlugData");
-    for (const auto& row : rows) {
-        auto* data = response->add_plug_data();
-        data->set_source(row[0]);
-        data->set_power(std::stod(row[1]));
-        data->set_timestamp(std::stoll(row[2]));
+    try {
+        auto rows = db_->query("SELECT source, power, timestamp FROM plugData");
+        for (const auto& row : rows) {
+            auto* data = response->add_plug_data();
+            data->set_source(row[0]);
+            data->set_power(std::stod(row[1]));
+            data->set_timestamp(std::stoll(row[2]));
+        }
+        return grpc::Status::OK;
+    } catch (const std::exception& e) {
+        std::cerr << "Error in GetPlugData: " << e.what() << std::endl;
+        return grpc::Status(grpc::StatusCode::INTERNAL, e.what());
     }
-    return grpc::Status::OK;
 }
 
 grpc::Status DaVinciServiceImpl::GetTemperatureData(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_TemperatureDataArray* response) {
-    auto rows = db_->query("SELECT source, temperature, humidity, timestamp FROM TemperatureData");
-    for (const auto& row : rows) {
-        auto* data = response->add_temperature_data();
-        data->set_source(row[0]);
-        data->set_temperature(std::stod(row[1]));
-        data->set_humidity(std::stod(row[2]));
-        data->set_timestamp(std::stoll(row[3]));
+    try {
+        auto rows = db_->query("SELECT source, temperature, humidity, timestamp FROM temperatureData");
+        for (const auto& row : rows) {
+            auto* data = response->add_temperature_data();
+            data->set_source(row[0]);
+            data->set_temperature(std::stod(row[1]));
+            data->set_humidity(std::stod(row[2]));
+            data->set_timestamp(std::stoll(row[3]));
+        }
+        return grpc::Status::OK;
+    } catch (const std::exception& e) {
+        std::cerr << "Error in GetTemperatureData: " << e.what() << std::endl;
+        return grpc::Status(grpc::StatusCode::INTERNAL, e.what());
     }
-    return grpc::Status::OK;
 }
 
 void RunServer(const std::string& port, Database* db) {

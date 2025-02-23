@@ -1,6 +1,10 @@
 # Gradle files
 .gradle/
-build/
+build/file
+
+#DB Files
+*.db
+*.sqlite3
 
 # Local configuration file (sdk path, etc)
 local.properties
