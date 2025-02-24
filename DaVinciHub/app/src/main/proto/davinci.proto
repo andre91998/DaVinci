@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "davinci.io.grpc";
+option java_outer_classname = "Test";
+option objc_class_prefix = "DV";
+
+package daVinciRPC;
+
+service DaVinciService {
+  rpc GetSupportedSensorTypes(Empty) returns (RPC_SupportedSensorTypes);
+  rpc GetDimmerData(Empty) returns (RPC_DimmerDataArray);
+  rpc GetPlugData(Empty) returns (RPC_PlugDataArray);
+  rpc GetTemperatureData(Empty) returns (RPC_TemperatureDataArray);
+}
+
+message Empty {}
+
+message RPC_SupportedSensorTypes {
+  repeated string sensor_types = 1;
+}
+
+message RPC_ShellyPlusDimmerData {
+  string source = 1;
+  int32 brightness = 2;
+  bool state = 3;
+  double timestamp = 4;
+}
+
+message RPC_DimmerDataArray {
+  repeated RPC_ShellyPlusDimmerData dimmer_data = 1;
+}
+
+message RPC_ShellyPlusPlugData {
+  string source = 1;
+  double power = 2;
+  double timestamp = 3;
+}
+
+message RPC_PlugDataArray {
+  repeated RPC_ShellyPlusPlugData plug_data = 1;
+}
+
+message RPC_ShellyPlusTemperatureData {
+  string source = 1;
+  double humidity = 2;
+  double temperature = 3;
+  double timestamp = 4;
+}
+
+message RPC_TemperatureDataArray {
+  repeated RPC_ShellyPlusTemperatureData temperature_data = 1;
+}
