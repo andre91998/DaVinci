@@ -70,9 +70,9 @@ std::vector<std::vector<std::string>> Database::query(const std::string& query) 
 
 void Database::createTables() {
     std::vector<std::string> table_creation_queries = {
-        "CREATE TABLE IF NOT EXISTS dimmerData (id INTEGER PRIMARY KEY, source TEXT, brightness INTEGER, state BOOLEAN, timestamp REAL);",
-        "CREATE TABLE IF NOT EXISTS plugData (id INTEGER PRIMARY KEY, source TEXT, power REAL, timestamp REAL);",
-        "CREATE TABLE IF NOT EXISTS temperatureData (id INTEGER PRIMARY KEY, source TEXT, humidity REAL, temperature REAL, timestamp REAL);"
+        "CREATE TABLE IF NOT EXISTS shellyDimmerData (id INTEGER PRIMARY KEY, source TEXT, brightness INTEGER, state BOOLEAN, timestamp REAL);",
+        "CREATE TABLE IF NOT EXISTS shellyPlugData (id INTEGER PRIMARY KEY, source TEXT, power REAL, timestamp REAL);",
+        "CREATE TABLE IF NOT EXISTS shellyTemperatureData (id INTEGER PRIMARY KEY, source TEXT, humidity REAL, temperature REAL, timestamp REAL);"
     };
 
     for (const auto& query : table_creation_queries) {

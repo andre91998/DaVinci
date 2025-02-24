@@ -116,17 +116,21 @@ vim davinci_runtime.service
 Place the following contents into the *davinci_runtime.service* file:
 
 ```
+[Unit]
 Description=DaVinci Runtime
-After=network.target
+After=network-online.target
+StartLimitIntervalSec=0
 
 [Service]
-ExecStart=/path/to/your/executable/DaVinciRuntime
-WorkingDirectory=/path/to/your/executable/
-User=<your_username>
+ExecStart=/home/andre/projects/DaVinci/DaVinciRuntime/cmake/build/DaVinciRuntime
+WorkingDirectory=/home/andre/projects/DaVinci/DaVinciRuntime/cmake/build
+User=andre
 Restart=on-failure
+RestartSec=5
+Type=simple
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
 ```
 
 Now, run the following commands:
