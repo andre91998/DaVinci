@@ -11,11 +11,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    compileSdkVersion 34
+    compileSdkVersion 35
 
     defaultConfig {
         applicationId "com.davinci.hub"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
@@ -88,4 +88,15 @@ dependencies {
     implementation libs.androidx.compose.ui.tooling
 
     //screenshotTestImplementation(libs.androidx.compose.ui.tooling)
+
+    // Required -- JUnit 4 framework
+    testImplementation libs.junit
+    // Optional -- Robolectric environment
+    testImplementation libs.androidx.core
+    // Optional -- Mockito framework
+    testImplementation libs.mockito.core
+    // Optional -- mockito-kotlin
+    testImplementation libs.mockito.kotlin
+    // Optional -- Mockk framework
+    testImplementation libs.mockk
 }
