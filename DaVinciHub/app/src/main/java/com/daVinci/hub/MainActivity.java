@@ -16,105 +16,116 @@
 
 package com.daVinci.hub;
 
-import android.app.Activity;
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import android.text.TextUtils;
+
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.ref.WeakReference;
-import java.util.concurrent.TimeUnit;
-import davinci.io.grpc.DaVinciServiceGrpc;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import davinci.io.grpc.RPC_DimmerDataArray;
+import davinci.io.grpc.RPC_PlugDataArray;
+import davinci.io.grpc.RPC_SupportedSensorTypes;
+import davinci.io.grpc.RPC_TemperatureDataArray;
 
 public class MainActivity extends AppCompatActivity {
+  private static final String TAG = "MainActivity";
   private Button sendButton;
-  private EditText hostEdit;
-  private EditText portEdit;
-  private EditText messageEdit;
   private TextView resultText;
+  private GrpcClient grpcClient;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_helloworld);
+    setContentView(R.layout.activity_main);
+    resultText = (TextView) findViewById(R.id.grpc_response_text);
+    resultText.setMovementMethod(new ScrollingMovementMethod());
+
     sendButton = (Button) findViewById(R.id.send_button);
     sendButton.setOnClickListener(
             new View.OnClickListener() {
               @Override
               public void onClick(View v) {
-                sendMessage(v);
+                Log.d(TAG, "onClick()");
+                ExecutorService executor = Executors.newFixedThreadPool(1);
+                GetSensorTypesCallable callable = new GetSensorTypesCallable();
+                Future<String> future = executor.submit(callable);
+                GetDimmerDataCallable callable1 = new GetDimmerDataCallable();
+                executor.submit(callable1);
+                GetPlugDataCallable callable2 = new GetPlugDataCallable();
+                executor.submit(callable2);
+                GetTemperatureDataCallable callable3 = new GetTemperatureDataCallable();
+                executor.submit(callable3);
+                try {
+                  String result = future.get();
+                  System.out.println("Result from thread: " + result);
+                  resultText.setText(result);
+                } catch (InterruptedException | ExecutionException e) {
+                  e.printStackTrace();
+                } finally {
+                  executor.shutdown();
+                }
               }
             });
-    hostEdit = (EditText) findViewById(R.id.host_edit_text);
-    portEdit = (EditText) findViewById(R.id.port_edit_text);
-    messageEdit = (EditText) findViewById(R.id.message_edit_text);
-    resultText = (TextView) findViewById(R.id.grpc_response_text);
-    resultText.setMovementMethod(new ScrollingMovementMethod());
+
+    //Hard Coded local address for now
+    grpcClient = new GrpcClient("192.168.86.73", 50051); // Adjust as needed
   }
 
-  public void sendMessage(View view) {
-    ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE))
-        .hideSoftInputFromWindow(hostEdit.getWindowToken(), 0);
-    sendButton.setEnabled(false);
-    resultText.setText("");
-    new GrpcTask(this)
-        .execute(
-            hostEdit.getText().toString(),
-            messageEdit.getText().toString(),
-            portEdit.getText().toString());
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    grpcClient.shutdown();
   }
 
-  private static class GrpcTask extends AsyncTask<String, Void, String> {
-    private final WeakReference<Activity> activityReference;
-    private ManagedChannel channel;
-
-    private GrpcTask(Activity activity) {
-      this.activityReference = new WeakReference<Activity>(activity);
-    }
-
+  class GetSensorTypesCallable implements Callable<String> {
     @Override
-    protected String doInBackground(String... params) {
-      String host = params[0];
-      String message = params[1];
-      String portStr = params[2];
-      int port = TextUtils.isEmpty(portStr) ? 0 : Integer.valueOf(portStr);
-      try {
-        channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
-        return "stub";
-      } catch (Exception e) {
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
-        e.printStackTrace(pw);
-        pw.flush();
-        return String.format("Failed... : %n%s", sw);
+    public String call() throws Exception {
+      RPC_SupportedSensorTypes sensorTypes = grpcClient.getSupportedSensorTypes();
+      if (sensorTypes != null) {
+        Log.d(TAG, "Supported Sensor Types: " + sensorTypes.getSensorTypesList());
+        return sensorTypes.toString();
       }
+      return "";
     }
+  }
 
+  class GetDimmerDataCallable implements Callable<RPC_DimmerDataArray> {
     @Override
-    protected void onPostExecute(String result) {
-      try {
-        channel.shutdown().awaitTermination(1, TimeUnit.SECONDS);
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-      }
-      Activity activity = activityReference.get();
-      if (activity == null) {
-        return;
-      }
-      TextView resultText = (TextView) activity.findViewById(R.id.grpc_response_text);
-      Button sendButton = (Button) activity.findViewById(R.id.send_button);
-      resultText.setText(result);
-      sendButton.setEnabled(true);
+    public RPC_DimmerDataArray call() throws Exception {
+      RPC_DimmerDataArray dimmerData = grpcClient.getDimmerData();
+      //TODO: LOGIC
+      Log.d(TAG, "Dimmer Data [0]: " + dimmerData.getDimmerData(0).toString());
+      return null;
+    }
+  }
+
+  class GetTemperatureDataCallable implements Callable<RPC_TemperatureDataArray> {
+    @Override
+    public RPC_TemperatureDataArray call() throws Exception {
+      RPC_TemperatureDataArray temperatureData = grpcClient.getTemperatureData();
+      //TODO: LOGIC
+      Log.d(TAG, "Temp Data [0]: " + temperatureData.getTemperatureData(0).toString());
+      return null;
+    }
+  }
+
+  class GetPlugDataCallable implements Callable<RPC_PlugDataArray> {
+    @Override
+    public RPC_PlugDataArray call() throws Exception {
+      RPC_PlugDataArray plugData = grpcClient.getPlugData();
+      //TODO: LOGIC
+      Log.d(TAG, "Plug Data [0]: " + plugData.getPlugData(0).toString());
+      return null;
     }
   }
 }
