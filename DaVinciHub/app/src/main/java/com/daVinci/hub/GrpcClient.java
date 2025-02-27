@@ -31,6 +31,8 @@ public class GrpcClient {
         }
     }
 
+    //ZERO INDEX OF THE DATA ARRAYS IS THE OLDEST DATA POINT, NOT THE MOST RECENT
+
     public RPC_DimmerDataArray getDimmerData() {
         Empty request = Empty.newBuilder().build();
         try {

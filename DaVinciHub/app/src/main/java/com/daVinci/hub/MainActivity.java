@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     public RPC_DimmerDataArray call() throws Exception {
       RPC_DimmerDataArray dimmerData = grpcClient.getDimmerData();
       //TODO: LOGIC
-      Log.d(TAG, "Dimmer Data [0]: " + dimmerData.getDimmerData(0).toString());
+      Log.d(TAG, "Dimmer Data [last]: " + dimmerData.getDimmerData(dimmerData.getDimmerDataCount()-1).toString());
       return null;
     }
   }
