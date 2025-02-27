@@ -50,7 +50,7 @@ grpc::Status DaVinciServiceImpl::GetSupportedSensorTypes(grpc::ServerContext* co
 
 grpc::Status DaVinciServiceImpl::GetDimmerData(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_DimmerDataArray* response) {
     try {
-        auto rows = db_->query("SELECT source, brightness, state, timestamp FROM dimmerData");
+        auto rows = db_->query("SELECT source, brightness, state, timestamp FROM shellyDimmerData");
         for (const auto& row : rows) {
             auto* data = response->add_dimmer_data();
             data->set_source(row[0]);
@@ -67,7 +67,8 @@ grpc::Status DaVinciServiceImpl::GetDimmerData(grpc::ServerContext* context, con
 
 grpc::Status DaVinciServiceImpl::GetPlugData(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_PlugDataArray* response) {
     try {
-        auto rows = db_->query("SELECT source, power, timestamp FROM plugData");
+        auto rows = db_->query("SELECT source, power, timestamp FROM shellyPlugData");
+        std::cout << "Plug rows: " << rows.size() << std::endl;
         for (const auto& row : rows) {
             auto* data = response->add_plug_data();
             data->set_source(row[0]);
@@ -83,12 +84,12 @@ grpc::Status DaVinciServiceImpl::GetPlugData(grpc::ServerContext* context, const
 
 grpc::Status DaVinciServiceImpl::GetTemperatureData(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_TemperatureDataArray* response) {
     try {
-        auto rows = db_->query("SELECT source, temperature, humidity, timestamp FROM temperatureData");
+        auto rows = db_->query("SELECT source, humidity, temperature, timestamp FROM shellyTemperatureData");
         for (const auto& row : rows) {
             auto* data = response->add_temperature_data();
             data->set_source(row[0]);
-            data->set_temperature(std::stod(row[1]));
-            data->set_humidity(std::stod(row[2]));
+            data->set_humidity(std::stod(row[1]));
+            data->set_temperature(std::stod(row[2]));
             data->set_timestamp(std::stoll(row[3]));
         }
         return grpc::Status::OK;
