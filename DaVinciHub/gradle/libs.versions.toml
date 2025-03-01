@@ -7,8 +7,13 @@ compose = "1.0.0-alpha01"
 core = "latest"
 impress = "0.0.1"
 junit = "latest"
+junitJupiterApi = "5.7.0"
+junitVersion = "4.13.2"
 kotlinxCoroutinesGuava = "1.9.0"
 mockitoCore = "latest"
+mockitoCoreVersion = "3.6.28"
+mockitoInline = "4.0.0"
+mockitoJunitJupiter = "3.6.28"
 mockitoKotlin = "latest"
 mockk = "latest"
 scenecore = "1.0.0-alpha01"
@@ -28,6 +33,9 @@ androidx-scenecore = { module = "androidx.xr.scenecore:scenecore", version.ref =
 com-android-compose-screenshot-gradle-plugin = { module = "com.android.compose.screenshot:com.android.compose.screenshot.gradle.plugin", version.ref = "comAndroidComposeScreenshotGradlePlugin" }
 impress = { module = "com.google.ar:impress", version.ref = "impress" }
 junit = { module = "junit:junit", version.ref = "junit" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterApi" }
+junit-v4132 = { module = "junit:junit", version.ref = "junitVersion" }
 kotlinx-coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-guava", version.ref = "kotlinxCoroutinesGuava" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
@@ -38,6 +46,9 @@ androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", versio
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-adaptive-android = { group = "androidx.compose.material3.adaptive", name = "adaptive-android", version.ref = "adaptiveAndroid" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-core-v3628 = { module = "org.mockito:mockito-core", version.ref = "mockitoCoreVersion" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockitoJunitJupiter" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
