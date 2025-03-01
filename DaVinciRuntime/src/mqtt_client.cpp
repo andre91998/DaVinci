@@ -88,24 +88,30 @@ void MQTTClient::on_message(const std::string& topic, const std::string& payload
             JSONProcessor::SensorData sensorData = processor->process(json);
             if (processor->getType() == (int) SensorType::SHELLY_DIMMER) {
                 auto data = std::get<ShellyPlusDimmerData>(sensorData);
-                db_->execute("INSERT INTO shellyDimmerData (source, brightness, state, timestamp) VALUES ('" +
-                            data.getSource() + "', " +
-                            std::to_string(data.getBrightness()) + ", " +
-                            std::to_string(data.getState()) + ", " +
-                            std::to_string(data.getTimestamp()) + ")");
+                if (data.getSource().compare("stub") != 0) {
+                    db_->execute("INSERT INTO shellyDimmerData (source, brightness, state, timestamp) VALUES ('" +
+                                data.getSource() + "', " +
+                                std::to_string(data.getBrightness()) + ", " +
+                                std::to_string(data.getState()) + ", " +
+                                std::to_string(data.getTimestamp()) + ")");
+                }
             } else if (processor->getType() == (int) SensorType::SHELLY_PLUG) {
                 auto data = std::get<ShellyPlusPlugData>(sensorData);
-                db_->execute("INSERT INTO shellyPlugData (source, power, timestamp) VALUES ('" +
-                            data.getSource() + "', " +
-                            std::to_string(data.getPower()) + ", " +
-                            std::to_string(data.getTimestamp()) + ")");
+                if (data.getSource().compare("stub") != 0) {
+                    db_->execute("INSERT INTO shellyPlugData (source, power, timestamp) VALUES ('" +
+                                data.getSource() + "', " +
+                                std::to_string(data.getPower()) + ", " +
+                                std::to_string(data.getTimestamp()) + ")");
+                    }
             } else if (processor->getType() == (int) SensorType::SHELLY_TEMP) {
                 auto data = std::get<ShellyPlusTemperatureData>(sensorData);
-                db_->execute("INSERT INTO shellyTemperatureData (source, humidity, temperature, timestamp) VALUES ('" +
-                            data.getSource() + "', " +
-                            std::to_string(data.getTemperature()) + ", " +
-                            std::to_string(data.getHumidity()) + ", " +
-                            std::to_string(data.getTimestamp()) + ")");
+                if (data.getSource().compare("stub") != 0) {
+                    db_->execute("INSERT INTO shellyTemperatureData (source, humidity, temperature, timestamp) VALUES ('" +
+                                data.getSource() + "', " +
+                                std::to_string(data.getTemperature()) + ", " +
+                                std::to_string(data.getHumidity()) + ", " +
+                                std::to_string(data.getTimestamp()) + ")");
+                }
             }
         } else {
             std::cerr << "Failed to parse JSON: " << errs << std::endl;

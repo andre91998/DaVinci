@@ -66,8 +66,8 @@ JSONProcessor::SensorData ShellyPlusTemperatureNotificationProcessor::processFul
 
 void ShellyPlusTemperatureNotificationProcessor::logData(ShellyPlusTemperatureData temperatureData) {
     std::cout << "Source: " << temperatureData.getSource() << std::endl;
-    std::cout << "Brightness: " << temperatureData.getHumidity() << std::endl;
-    std::cout << "State: " << temperatureData.getTemperature() << std::endl;
+    std::cout << "Humidity: " << temperatureData.getHumidity() << std::endl;
+    std::cout << "Temperature: " << temperatureData.getTemperature() << std::endl;
     std::cout << "Time: " << temperatureData.getTimestamp() << std::endl;
 }
 
