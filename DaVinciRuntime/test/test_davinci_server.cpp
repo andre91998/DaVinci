@@ -80,6 +80,19 @@ TEST_F(DaVinciServiceTest, GetSupportedSensorTypes) {
     EXPECT_EQ(response.sensor_types(2), "ShellyPlusPlug");
 }
 
+TEST_F(DaVinciServiceTest, GetSensorList) {
+    grpc::ServerContext context;
+    daVinciRPC::Empty request;
+    daVinciRPC::RPC_Sensors response;
+
+    grpc::Status status = service->GetSensorList(&context, &request, &response);
+    ASSERT_TRUE(status.ok());
+    ASSERT_EQ(response.sensor_names_size(), 3);
+    EXPECT_EQ(response.sensor_names(0), "source1");
+    EXPECT_EQ(response.sensor_names(1), "source1");
+    EXPECT_EQ(response.sensor_names(2), "source1");
+}
+
 TEST_F(DaVinciServiceTest, RunServer) {
     std::thread server_thread([this]() {
         RunServer("50051", db);
