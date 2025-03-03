@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rdavinci.proto\x12\ndaVinciRPC\"\x07\n\x05\x45mpty\"0\n\x18RPC_SupportedSensorTypes\x12\x14\n\x0csensor_types\x18\x01 \x03(\t\"`\n\x18RPC_ShellyPlusDimmerData\x12\x0e\n\x06source\x18\x01 \x01(\t\x12\x12\n\nbrightness\x18\x02 \x01(\x05\x12\r\n\x05state\x18\x03 \x01(\x08\x12\x11\n\ttimestamp\x18\x04 \x01(\x01\"P\n\x13RPC_DimmerDataArray\x12\x39\n\x0b\x64immer_data\x18\x01 \x03(\x0b\x32$.daVinciRPC.RPC_ShellyPlusDimmerData\"J\n\x16RPC_ShellyPlusPlugData\x12\x0e\n\x06source\x18\x01 \x01(\t\x12\r\n\x05power\x18\x02 \x01(\x01\x12\x11\n\ttimestamp\x18\x03 \x01(\x01\"J\n\x11RPC_PlugDataArray\x12\x35\n\tplug_data\x18\x01 \x03(\x0b\x32\".daVinciRPC.RPC_ShellyPlusPlugData\"i\n\x1dRPC_ShellyPlusTemperatureData\x12\x0e\n\x06source\x18\x01 \x01(\t\x12\x10\n\x08humidity\x18\x02 \x01(\x01\x12\x13\n\x0btemperature\x18\x03 \x01(\x01\x12\x11\n\ttimestamp\x18\x04 \x01(\x01\"_\n\x18RPC_TemperatureDataArray\x12\x43\n\x10temperature_data\x18\x01 \x03(\x0b\x32).daVinciRPC.RPC_ShellyPlusTemperatureData2\xb9\x02\n\x0e\x44\x61VinciService\x12R\n\x17GetSupportedSensorTypes\x12\x11.daVinciRPC.Empty\x1a$.daVinciRPC.RPC_SupportedSensorTypes\x12\x43\n\rGetDimmerData\x12\x11.daVinciRPC.Empty\x1a\x1f.daVinciRPC.RPC_DimmerDataArray\x12?\n\x0bGetPlugData\x12\x11.daVinciRPC.Empty\x1a\x1d.daVinciRPC.RPC_PlugDataArray\x12M\n\x12GetTemperatureData\x12\x11.daVinciRPC.Empty\x1a$.daVinciRPC.RPC_TemperatureDataArrayB\x1e\n\x0f\x64\x61vinci.io.grpcB\x04TestP\x01\xa2\x02\x02\x44Vb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\rdavinci.proto\x12\ndaVinciRPC\"\x07\n\x05\x45mpty\"0\n\x18RPC_SupportedSensorTypes\x12\x14\n\x0csensor_types\x18\x01 \x03(\t\"#\n\x0bRPC_Sensors\x12\x14\n\x0csensor_names\x18\x01 \x03(\t\"`\n\x18RPC_ShellyPlusDimmerData\x12\x0e\n\x06source\x18\x01 \x01(\t\x12\x12\n\nbrightness\x18\x02 \x01(\x05\x12\r\n\x05state\x18\x03 \x01(\x08\x12\x11\n\ttimestamp\x18\x04 \x01(\x01\"P\n\x13RPC_DimmerDataArray\x12\x39\n\x0b\x64immer_data\x18\x01 \x03(\x0b\x32$.daVinciRPC.RPC_ShellyPlusDimmerData\"J\n\x16RPC_ShellyPlusPlugData\x12\x0e\n\x06source\x18\x01 \x01(\t\x12\r\n\x05power\x18\x02 \x01(\x01\x12\x11\n\ttimestamp\x18\x03 \x01(\x01\"J\n\x11RPC_PlugDataArray\x12\x35\n\tplug_data\x18\x01 \x03(\x0b\x32\".daVinciRPC.RPC_ShellyPlusPlugData\"i\n\x1dRPC_ShellyPlusTemperatureData\x12\x0e\n\x06source\x18\x01 \x01(\t\x12\x10\n\x08humidity\x18\x02 \x01(\x01\x12\x13\n\x0btemperature\x18\x03 \x01(\x01\x12\x11\n\ttimestamp\x18\x04 \x01(\x01\"_\n\x18RPC_TemperatureDataArray\x12\x43\n\x10temperature_data\x18\x01 \x03(\x0b\x32).daVinciRPC.RPC_ShellyPlusTemperatureData2\xf6\x02\n\x0e\x44\x61VinciService\x12R\n\x17GetSupportedSensorTypes\x12\x11.daVinciRPC.Empty\x1a$.daVinciRPC.RPC_SupportedSensorTypes\x12;\n\rGetSensorList\x12\x11.daVinciRPC.Empty\x1a\x17.daVinciRPC.RPC_Sensors\x12\x43\n\rGetDimmerData\x12\x11.daVinciRPC.Empty\x1a\x1f.daVinciRPC.RPC_DimmerDataArray\x12?\n\x0bGetPlugData\x12\x11.daVinciRPC.Empty\x1a\x1d.daVinciRPC.RPC_PlugDataArray\x12M\n\x12GetTemperatureData\x12\x11.daVinciRPC.Empty\x1a$.daVinciRPC.RPC_TemperatureDataArrayB\x1e\n\x0f\x64\x61vinci.io.grpcB\x04TestP\x01\xa2\x02\x02\x44Vb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -36,18 +36,20 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_EMPTY']._serialized_end=36
   _globals['_RPC_SUPPORTEDSENSORTYPES']._serialized_start=38
   _globals['_RPC_SUPPORTEDSENSORTYPES']._serialized_end=86
-  _globals['_RPC_SHELLYPLUSDIMMERDATA']._serialized_start=88
-  _globals['_RPC_SHELLYPLUSDIMMERDATA']._serialized_end=184
-  _globals['_RPC_DIMMERDATAARRAY']._serialized_start=186
-  _globals['_RPC_DIMMERDATAARRAY']._serialized_end=266
-  _globals['_RPC_SHELLYPLUSPLUGDATA']._serialized_start=268
-  _globals['_RPC_SHELLYPLUSPLUGDATA']._serialized_end=342
-  _globals['_RPC_PLUGDATAARRAY']._serialized_start=344
-  _globals['_RPC_PLUGDATAARRAY']._serialized_end=418
-  _globals['_RPC_SHELLYPLUSTEMPERATUREDATA']._serialized_start=420
-  _globals['_RPC_SHELLYPLUSTEMPERATUREDATA']._serialized_end=525
-  _globals['_RPC_TEMPERATUREDATAARRAY']._serialized_start=527
-  _globals['_RPC_TEMPERATUREDATAARRAY']._serialized_end=622
-  _globals['_DAVINCISERVICE']._serialized_start=625
-  _globals['_DAVINCISERVICE']._serialized_end=938
+  _globals['_RPC_SENSORS']._serialized_start=88
+  _globals['_RPC_SENSORS']._serialized_end=123
+  _globals['_RPC_SHELLYPLUSDIMMERDATA']._serialized_start=125
+  _globals['_RPC_SHELLYPLUSDIMMERDATA']._serialized_end=221
+  _globals['_RPC_DIMMERDATAARRAY']._serialized_start=223
+  _globals['_RPC_DIMMERDATAARRAY']._serialized_end=303
+  _globals['_RPC_SHELLYPLUSPLUGDATA']._serialized_start=305
+  _globals['_RPC_SHELLYPLUSPLUGDATA']._serialized_end=379
+  _globals['_RPC_PLUGDATAARRAY']._serialized_start=381
+  _globals['_RPC_PLUGDATAARRAY']._serialized_end=455
+  _globals['_RPC_SHELLYPLUSTEMPERATUREDATA']._serialized_start=457
+  _globals['_RPC_SHELLYPLUSTEMPERATUREDATA']._serialized_end=562
+  _globals['_RPC_TEMPERATUREDATAARRAY']._serialized_start=564
+  _globals['_RPC_TEMPERATUREDATAARRAY']._serialized_end=659
+  _globals['_DAVINCISERVICE']._serialized_start=662
+  _globals['_DAVINCISERVICE']._serialized_end=1036
 # @@protoc_insertion_point(module_scope)
