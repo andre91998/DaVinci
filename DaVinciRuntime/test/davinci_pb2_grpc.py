@@ -39,6 +39,11 @@ class DaVinciServiceStub(object):
                 request_serializer=davinci__pb2.Empty.SerializeToString,
                 response_deserializer=davinci__pb2.RPC_SupportedSensorTypes.FromString,
                 _registered_method=True)
+        self.GetSensorList = channel.unary_unary(
+                '/daVinciRPC.DaVinciService/GetSensorList',
+                request_serializer=davinci__pb2.Empty.SerializeToString,
+                response_deserializer=davinci__pb2.RPC_Sensors.FromString,
+                _registered_method=True)
         self.GetDimmerData = channel.unary_unary(
                 '/daVinciRPC.DaVinciService/GetDimmerData',
                 request_serializer=davinci__pb2.Empty.SerializeToString,
@@ -60,6 +65,12 @@ class DaVinciServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def GetSupportedSensorTypes(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetSensorList(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -90,6 +101,11 @@ def add_DaVinciServiceServicer_to_server(servicer, server):
                     servicer.GetSupportedSensorTypes,
                     request_deserializer=davinci__pb2.Empty.FromString,
                     response_serializer=davinci__pb2.RPC_SupportedSensorTypes.SerializeToString,
+            ),
+            'GetSensorList': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetSensorList,
+                    request_deserializer=davinci__pb2.Empty.FromString,
+                    response_serializer=davinci__pb2.RPC_Sensors.SerializeToString,
             ),
             'GetDimmerData': grpc.unary_unary_rpc_method_handler(
                     servicer.GetDimmerData,
@@ -134,6 +150,33 @@ class DaVinciService(object):
             '/daVinciRPC.DaVinciService/GetSupportedSensorTypes',
             davinci__pb2.Empty.SerializeToString,
             davinci__pb2.RPC_SupportedSensorTypes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetSensorList(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/daVinciRPC.DaVinciService/GetSensorList',
+            davinci__pb2.Empty.SerializeToString,
+            davinci__pb2.RPC_Sensors.FromString,
             options,
             channel_credentials,
             insecure,

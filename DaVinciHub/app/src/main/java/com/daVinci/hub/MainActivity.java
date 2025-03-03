@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public RPC_DimmerDataArray call() throws Exception {
       RPC_DimmerDataArray dimmerData = grpcClient.getDimmerData();
-      Log.d(TAG, "Dimmer Data [last]: " + dimmerData.getDimmerData(dimmerData.getDimmerDataCount()-1).toString());
       return dimmerData;
     }
   }
@@ -121,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public RPC_TemperatureDataArray call() throws Exception {
       RPC_TemperatureDataArray temperatureData = grpcClient.getTemperatureData();
-      Log.d(TAG, "Temp Data [0]: " + temperatureData.getTemperatureData(temperatureData.getTemperatureDataCount()-1).toString());
       return temperatureData;
     }
   }
@@ -130,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public RPC_PlugDataArray call() throws Exception {
       RPC_PlugDataArray plugData = grpcClient.getPlugData();
-      Log.d(TAG, "Plug Data [0]: " + plugData.getPlugData(plugData.getPlugDataCount()-1).toString());
       return plugData;
     }
   }
@@ -139,10 +136,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public RPC_Sensors call() throws Exception {
       RPC_Sensors sensors = grpcClient.getAllSensors();
-      for (int i = 0; i < sensors.getSensorNamesCount(); i++) {
-        Log.d(TAG, "Sensor Name: " + sensors.getSensorNames(i));
-      }
-
       return sensors;
     }
   }
