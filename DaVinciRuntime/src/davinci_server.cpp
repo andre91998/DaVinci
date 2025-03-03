@@ -56,7 +56,6 @@ grpc::Status DaVinciServiceImpl::GetSensorList(grpc::ServerContext* context, con
             std::copy(sensorSubList.begin(), sensorSubList.end(), std::ostream_iterator<std::string>(std::cout, " "));
             std::cout << std::endl;
             for (int j = 0; j < sensorSubList.size(); j++) {
-                //sensorList.push_back(sensorSubList.at(j));
                 response->add_sensor_names(sensorSubList.at(j));
             }
         }

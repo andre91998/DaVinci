@@ -6,7 +6,7 @@ TEST(ShellyPlusDimmerNotificationProcessorTest, Process) {
     ShellyPlusDimmerNotificationProcessor processor;
     Json::Value json;
     json["params"]["ts"] = 1234567890;
-    json["params"]["light:0"]["source"] = "source1";
+    json["src"] = "source1";
     json["params"]["light:0"]["brightness"] = 50;
     json["params"]["light:0"]["output"] = true;
 

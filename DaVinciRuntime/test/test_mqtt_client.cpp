@@ -14,16 +14,16 @@ protected:
         db = Database::getInstance(test_db_path);
 
         // Initialize the database with some test data
-        db->execute("CREATE TABLE IF NOT EXISTS DimmerData (source TEXT, brightness INTEGER, state INTEGER, timestamp INTEGER)");
-        db->execute("CREATE TABLE IF NOT EXISTS PlugData (source TEXT, power REAL, timestamp INTEGER)");
-        db->execute("CREATE TABLE IF NOT EXISTS TemperatureData (source TEXT, temperature REAL, humidity REAL, timestamp INTEGER)");
+        db->execute("CREATE TABLE IF NOT EXISTS shellyDimmerData (source TEXT, brightness INTEGER, state INTEGER, timestamp INTEGER)");
+        db->execute("CREATE TABLE IF NOT EXISTS shellyPlugData (source TEXT, power REAL, timestamp INTEGER)");
+        db->execute("CREATE TABLE IF NOT EXISTS shellyTemperatureData (source TEXT, temperature REAL, humidity REAL, timestamp INTEGER)");
 
-        db->execute("INSERT INTO DimmerData (source, brightness, state, timestamp) VALUES ('source1', 50, 1, 1234567890)");
-        db->execute("INSERT INTO PlugData (source, power, timestamp) VALUES ('source1', 100.0, 1234567890)");
-        db->execute("INSERT INTO TemperatureData (source, temperature, humidity, timestamp) VALUES ('source1', 25.0, 60.0, 1234567890)");
+        db->execute("INSERT INTO shellyDimmerData (source, brightness, state, timestamp) VALUES ('source1', 50, 1, 1234567890)");
+        db->execute("INSERT INTO shellyPlugData (source, power, timestamp) VALUES ('source1', 100.0, 1234567890)");
+        db->execute("INSERT INTO shellyTemperatureData (source, temperature, humidity, timestamp) VALUES ('source1', 25.0, 60.0, 1234567890)");
 
         // Initialize the MQTT client
-        mqtt_client = new MQTTClient("broker.hivemq.com", 1883, {"test/topic"}, test_db_path);
+        mqtt_client = new MQTTClient("localhost", 1883, {"test/topic"}, test_db_path);
     }
 
     void TearDown() override {
