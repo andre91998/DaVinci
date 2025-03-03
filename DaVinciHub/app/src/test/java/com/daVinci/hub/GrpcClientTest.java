@@ -66,6 +66,27 @@ public class GrpcClientTest {
     }
 
     @Test
+    public void testGetAllSensors() {
+        RPC_Sensors expectedResponse = RPC_Sensors.newBuilder()
+                .addSensorNames("Sensor1")
+                .build();
+
+        when(mockBlockingStub.getSensorList(any(Empty.class))).thenReturn(expectedResponse);
+
+        RPC_Sensors actualResponse = grpcClient.getAllSensors();
+        assertNotNull(actualResponse);
+        assertEquals(expectedResponse, actualResponse);
+    }
+
+    @Test
+    public void testGetAllSensorsWithException() {
+        when(mockBlockingStub.getSensorList(any(Empty.class))).thenThrow(StatusRuntimeException.class);
+
+        RPC_Sensors actualResponse = grpcClient.getAllSensors();
+        assertNull(actualResponse);
+    }
+
+    @Test
     public void testGetDimmerData() {
         RPC_DimmerDataArray expectedResponse = RPC_DimmerDataArray.newBuilder()
                 .addDimmerData(RPC_ShellyPlusDimmerData.newBuilder().setSource("Dimmer1").build())
