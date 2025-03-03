@@ -1,5 +1,6 @@
 package com.daVinci.hub;
 
+import davinci.io.grpc.RPC_Sensors;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
@@ -25,6 +26,16 @@ public class GrpcClient {
         Empty request = Empty.newBuilder().build();
         try {
             return blockingStub.getSupportedSensorTypes(request);
+        } catch (StatusRuntimeException e) {
+            // Handle exceptions as needed
+            return null;
+        }
+    }
+
+    public RPC_Sensors getAllSensors() {
+        Empty request = Empty.newBuilder().build();
+        try {
+            return blockingStub.getSensorList(request);
         } catch (StatusRuntimeException e) {
             // Handle exceptions as needed
             return null;
