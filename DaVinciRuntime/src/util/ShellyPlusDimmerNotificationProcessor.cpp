@@ -18,11 +18,12 @@ JSONProcessor::SensorData ShellyPlusDimmerNotificationProcessor::process(const J
     std::cout << "Processing ShellyPlus-Dimmer data: " << json.toStyledString() << std::endl;
 
     Json::Value params = json["params"];
+    std::string source = json["src"].asString();
     double ts = params["ts"].asDouble();
     Json::Value light = params["light:0"];
     double brightness = light["brightness"].asDouble();
     bool output = light["output"].asBool();
-    std::string source = light["source"].asString();
+
 
     ShellyPlusDimmerData dimmerData(source, brightness, output, ts);
     logData(dimmerData);

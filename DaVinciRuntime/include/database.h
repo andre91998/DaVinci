@@ -12,12 +12,13 @@ public:
     static void destroyInstance();
     void execute(const std::string& query);
     std::vector<std::vector<std::string>> query(const std::string& query);
+    std::vector<std::string> listTables();
 
 private:
     Database(const std::string& db_path); // Private constructor
     ~Database();
     void createTables();
-
+    
     static Database* instance;
     sqlite3* db_;
 };

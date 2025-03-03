@@ -79,3 +79,19 @@ void Database::createTables() {
         execute(query);
     }
 }
+
+std::vector<std::string> Database::listTables() {
+    std::vector<std::string> tables;
+    try {
+        auto rows = query("SELECT name FROM sqlite_master WHERE type='table'");
+
+        for (const auto& row : rows) {
+            if (!row.empty()) {
+                tables.push_back(row[0]);
+            }
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error in listTables: " << e.what() << std::endl;
+    }
+    return tables;
+}

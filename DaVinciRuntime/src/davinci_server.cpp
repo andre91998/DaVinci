@@ -48,6 +48,27 @@ grpc::Status DaVinciServiceImpl::GetSupportedSensorTypes(grpc::ServerContext* co
     return Status::OK;
 }
 
+grpc::Status DaVinciServiceImpl::GetSensorList(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_Sensors* response) {
+    try {
+        std::vector<std::string> tableList = db_->listTables();
+        for (int i = 0; i < tableList.size(); i++) {
+            std::vector<std::string> sensorSubList = GetUniqueColumnValues(db_, tableList.at(i), "source");
+            std::copy(sensorSubList.begin(), sensorSubList.end(), std::ostream_iterator<std::string>(std::cout, " "));
+            std::cout << std::endl;
+            for (int j = 0; j < sensorSubList.size(); j++) {
+                //sensorList.push_back(sensorSubList.at(j));
+                response->add_sensor_names(sensorSubList.at(j));
+            }
+        }
+
+        return grpc::Status::OK;
+     
+    } catch (const std::exception& e) {
+        std::cerr << "Error in GetSensorList: " << e.what() << std::endl;
+        return grpc::Status(grpc::StatusCode::INTERNAL, e.what());
+    }
+}
+
 grpc::Status DaVinciServiceImpl::GetDimmerData(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_DimmerDataArray* response) {
     try {
         auto rows = db_->query("SELECT source, brightness, state, timestamp FROM shellyDimmerData");
@@ -118,4 +139,23 @@ void StopServer() {
         server.reset();
         std::cout << "Server stopped" << std::endl;
     }
+}
+
+std::vector<std::string> GetUniqueColumnValues(Database* db, const std::string& tableName, const std::string& columnName) {
+    std::vector<std::string> uniqueValues;
+    std::cout << "Get unique values for: " << columnName << std::endl;
+    try {
+        std::string query = "SELECT DISTINCT " + columnName + " FROM " + tableName;
+        auto rows = db->query(query);
+
+        for (const auto& row : rows) {
+            if (!row.empty()) {
+                std::cout << "Unique value: " << row[0] << std::endl;
+                uniqueValues.push_back(row[0]);
+            }
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error in GetUniqueColumnValues: " << e.what() << std::endl;
+    }
+    return uniqueValues;
 }

@@ -9,6 +9,7 @@ package daVinciRPC;
 
 service DaVinciService {
     rpc GetSupportedSensorTypes(Empty) returns (RPC_SupportedSensorTypes);
+    rpc GetSensorList(Empty) returns (RPC_Sensors);
     rpc GetDimmerData(Empty) returns (RPC_DimmerDataArray);
     rpc GetPlugData(Empty) returns (RPC_PlugDataArray);
     rpc GetTemperatureData(Empty) returns (RPC_TemperatureDataArray);
@@ -18,6 +19,10 @@ message Empty {}
 
 message RPC_SupportedSensorTypes {
     repeated string sensor_types = 1;
+}
+
+message RPC_Sensors {
+    repeated string sensor_names = 1;
 }
 
 message RPC_ShellyPlusDimmerData {
