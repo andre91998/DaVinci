@@ -34,6 +34,7 @@ import java.util.concurrent.Future;
 
 import davinci.io.grpc.RPC_DimmerDataArray;
 import davinci.io.grpc.RPC_PlugDataArray;
+import davinci.io.grpc.RPC_Sensors;
 import davinci.io.grpc.RPC_SupportedSensorTypes;
 import davinci.io.grpc.RPC_TemperatureDataArray;
 
@@ -58,14 +59,22 @@ public class MainActivity extends AppCompatActivity {
     plugText.setMovementMethod(new ScrollingMovementMethod());
 
     ExecutorService executor = Executors.newFixedThreadPool(1);
+
     GetSensorTypesCallable callable = new GetSensorTypesCallable();
     Future<String> future = executor.submit(callable);
+
     GetDimmerDataCallable callable1 = new GetDimmerDataCallable();
     Future<RPC_DimmerDataArray> dimmerFuture = executor.submit(callable1);
+
     GetPlugDataCallable callable2 = new GetPlugDataCallable();
     Future<RPC_PlugDataArray> plugFuture = executor.submit(callable2);
+
     GetTemperatureDataCallable callable3 = new GetTemperatureDataCallable();
     Future<RPC_TemperatureDataArray> temperatureFuture = executor.submit(callable3);
+
+    GetSensorsCallable callable4 = new GetSensorsCallable();
+    Future<RPC_Sensors> sensorsFuture = executor.submit(callable4);
+
     try {
       String result = future.get();
       System.out.println("Result from thread: " + result);
@@ -73,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
       dimmerText.setText(String.valueOf(dimmerFuture.get().getDimmerData(dimmerFuture.get().getDimmerDataCount() - 1).getBrightness()));
       temperatureText.setText(String.valueOf(temperatureFuture.get().getTemperatureData(temperatureFuture.get().getTemperatureDataCount()- 1).getTemperature()));
       plugText.setText(String.valueOf(plugFuture.get().getPlugData(plugFuture.get().getPlugDataCount() - 1).getPower()));
+      sensorsFuture.get();
     } catch (InterruptedException | ExecutionException e) {
       e.printStackTrace();
     } finally {
@@ -102,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public RPC_DimmerDataArray call() throws Exception {
       RPC_DimmerDataArray dimmerData = grpcClient.getDimmerData();
-      //TODO: LOGIC
       Log.d(TAG, "Dimmer Data [last]: " + dimmerData.getDimmerData(dimmerData.getDimmerDataCount()-1).toString());
       return dimmerData;
     }
@@ -112,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public RPC_TemperatureDataArray call() throws Exception {
       RPC_TemperatureDataArray temperatureData = grpcClient.getTemperatureData();
-      //TODO: LOGIC
       Log.d(TAG, "Temp Data [0]: " + temperatureData.getTemperatureData(temperatureData.getTemperatureDataCount()-1).toString());
       return temperatureData;
     }
@@ -122,9 +130,20 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public RPC_PlugDataArray call() throws Exception {
       RPC_PlugDataArray plugData = grpcClient.getPlugData();
-      //TODO: LOGIC
       Log.d(TAG, "Plug Data [0]: " + plugData.getPlugData(plugData.getPlugDataCount()-1).toString());
       return plugData;
+    }
+  }
+
+  class GetSensorsCallable implements Callable<RPC_Sensors> {
+    @Override
+    public RPC_Sensors call() throws Exception {
+      RPC_Sensors sensors = grpcClient.getAllSensors();
+      for (int i = 0; i < sensors.getSensorNamesCount(); i++) {
+        Log.d(TAG, "Sensor Name: " + sensors.getSensorNames(i));
+      }
+
+      return sensors;
     }
   }
 }
