@@ -79,11 +79,33 @@ public class MainActivity extends AppCompatActivity {
       String result = future.get();
       System.out.println("Result from thread: " + result);
 
-      dimmerText.setText(String.valueOf(dimmerFuture.get().getDimmerData(dimmerFuture.get().getDimmerDataCount() - 1).getBrightness()));
-      temperatureText.setText(String.valueOf(temperatureFuture.get().getTemperatureData(temperatureFuture.get().getTemperatureDataCount()- 1).getTemperature()));
-      plugText.setText(String.valueOf(plugFuture.get().getPlugData(plugFuture.get().getPlugDataCount() - 1).getPower()));
-      sensorsFuture.get();
-    } catch (InterruptedException | ExecutionException e) {
+      //If tables are empty, this crashes
+      RPC_DimmerDataArray dimmerDataArray = dimmerFuture.get();
+      if (dimmerDataArray != null) {
+        dimmerText.setText(String.valueOf(dimmerDataArray.getDimmerData(dimmerDataArray.getDimmerDataCount() - 1).getBrightness()));
+      } else {
+        dimmerText.setText("N/A");
+      }
+
+      RPC_PlugDataArray plugDataArray = plugFuture.get();
+      if (plugDataArray != null) {
+        plugText.setText(String.valueOf(plugDataArray.getPlugData(plugDataArray.getPlugDataCount() - 1).getPower()));
+      } else {
+        plugText.setText("N/A");
+      }
+
+      RPC_TemperatureDataArray temperatureDataArray = temperatureFuture.get();
+      if (temperatureDataArray != null) {
+        temperatureText.setText(String.valueOf(temperatureDataArray.getTemperatureData(temperatureDataArray.getTemperatureDataCount() - 1).getTemperature()));
+      } else {
+        temperatureText.setText("N/A");
+      }
+
+      RPC_Sensors sensors = sensorsFuture.get();
+      if (sensors != null) {
+        Log.d(TAG, sensors.getSensorNamesList().toString());
+      }
+    } catch (InterruptedException | ExecutionException | IndexOutOfBoundsException e) {
       e.printStackTrace();
     } finally {
       executor.shutdown();
@@ -104,39 +126,35 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "Supported Sensor Types: " + sensorTypes.getSensorTypesList());
         return sensorTypes.toString();
       }
-      return "";
+      return "N/A";
     }
   }
 
   class GetDimmerDataCallable implements Callable<RPC_DimmerDataArray> {
     @Override
     public RPC_DimmerDataArray call() throws Exception {
-      RPC_DimmerDataArray dimmerData = grpcClient.getDimmerData();
-      return dimmerData;
+        return grpcClient.getDimmerData();
     }
   }
 
   class GetTemperatureDataCallable implements Callable<RPC_TemperatureDataArray> {
     @Override
     public RPC_TemperatureDataArray call() throws Exception {
-      RPC_TemperatureDataArray temperatureData = grpcClient.getTemperatureData();
-      return temperatureData;
+        return grpcClient.getTemperatureData();
     }
   }
 
   class GetPlugDataCallable implements Callable<RPC_PlugDataArray> {
     @Override
     public RPC_PlugDataArray call() throws Exception {
-      RPC_PlugDataArray plugData = grpcClient.getPlugData();
-      return plugData;
+        return grpcClient.getPlugData();
     }
   }
 
   class GetSensorsCallable implements Callable<RPC_Sensors> {
     @Override
     public RPC_Sensors call() throws Exception {
-      RPC_Sensors sensors = grpcClient.getAllSensors();
-      return sensors;
+        return grpcClient.getAllSensors();
     }
   }
 }
