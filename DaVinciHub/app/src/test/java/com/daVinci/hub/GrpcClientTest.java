@@ -28,7 +28,8 @@ public class GrpcClientTest {
 
     @BeforeEach
     public void setUp() {
-        grpcClient = new GrpcClient("localhost", 50051);
+        //grpcClient = new GrpcClient("75.6.165.166", 2026);
+        grpcClient = new GrpcClient("75.6.165.166", 50051);
         try {
             setGrpcClientBlockingStub(grpcClient, mockBlockingStub);
         } catch (NoSuchFieldException | IllegalAccessException e) {
