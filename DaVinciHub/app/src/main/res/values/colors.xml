@@ -23,4 +23,5 @@
     <color name="pale_beige">#F9F6D4</color>
     <color name="dark_slate">#303B3C</color>
     <color name="deep_midnight_blue">#0E1A22</color>
+    <color name="title_bar">#03A9F4</color>
 </resources>
