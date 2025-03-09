@@ -10,67 +10,68 @@ import davinci_pb2_grpc as pb2_grpc
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
-def test_supported_sensor_types(stub):
-    try:
-        request = pb2.Empty()
-        response = stub.GetSupportedSensorTypes(request)
-        logging.info(f"GetSupportedSensorTypes response: {response}")
-        return True
-    except grpc.RpcError as e:
-        logging.error(f"An error occurred during GetSupportedSensorTypes: {e.details()}")
-        logging.error(f"Error code: {e.code()}")
-        logging.error(f"Debug details: {e.debug_error_string()}")
-        return False
-    
-def test_sensor_list(stub):
-    try:
-        request = pb2.Empty()
-        response = stub.GetSensorList(request)
-        logging.info(f"GetSensorList response: {response}")
-        return True
-    except grpc.RpcError as e:
-        logging.error(f"An error occurred during GetSensorList: {e.details()}")
-        logging.error(f"Error code: {e.code()}")
-        logging.error(f"Debug details: {e.debug_error_string()}")
-        return False
 
-def test_dimmer_data(stub):
-    try:
-        request = pb2.Empty()
-        response = stub.GetDimmerData(request)
-        logging.info(f"GetDimmerData response: {response}")
-        return True
-    except grpc.RpcError as e:
-        logging.error(f"An error occurred during GetDimmerData: {e.details()}")
-        logging.error(f"Error code: {e.code()}")
-        logging.error(f"Debug details: {e.debug_error_string()}")
-        return False
-
-def test_plug_data(stub):
-    try:
-        request = pb2.Empty()
-        response = stub.GetPlugData(request)
-        logging.info(f"GetPlugData response: {response}")
-        return True
-    except grpc.RpcError as e:
-        logging.error(f"An error occurred during GetPlugData: {e.details()}")
-        logging.error(f"Error code: {e.code()}")
-        logging.error(f"Debug details: {e.debug_error_string()}")
-        return False
-
-def test_temperature_data(stub):
-    try:
-        request = pb2.Empty()
-        response = stub.GetTemperatureData(request)
-        logging.info(f"GetTemperatureData response: {response}")
-        return True
-    except grpc.RpcError as e:
-        logging.error(f"An error occurred during GetTemperatureData: {e.details()}")
-        logging.error(f"Error code: {e.code()}")
-        logging.error(f"Debug details: {e.debug_error_string()}")
-        return False
 
 def main():
+    def test_supported_sensor_types(stub):
+        try:
+            request = pb2.Empty()
+            response = stub.GetSupportedSensorTypes(request)
+            #logging.info(f"GetSupportedSensorTypes response: {response}")
+            return True
+        except grpc.RpcError as e:
+            logging.error(f"An error occurred during GetSupportedSensorTypes: {e.details()}")
+            logging.error(f"Error code: {e.code()}")
+            logging.error(f"Debug details: {e.debug_error_string()}")
+            return False
+        
+    def test_sensor_list(stub):
+        try:
+            request = pb2.Empty()
+            response = stub.GetSensorList(request)
+            #logging.info(f"GetSensorList response: {response}")
+            return True
+        except grpc.RpcError as e:
+            logging.error(f"An error occurred during GetSensorList: {e.details()}")
+            logging.error(f"Error code: {e.code()}")
+            logging.error(f"Debug details: {e.debug_error_string()}")
+            return False
+
+    def test_dimmer_data(stub):
+        try:
+            request = pb2.Empty()
+            response = stub.GetDimmerData(request)
+            #logging.info(f"GetDimmerData response: {response}")
+            return True
+        except grpc.RpcError as e:
+            logging.error(f"An error occurred during GetDimmerData: {e.details()}")
+            logging.error(f"Error code: {e.code()}")
+            logging.error(f"Debug details: {e.debug_error_string()}")
+            return False
+
+    def test_plug_data(stub):
+        try:
+            request = pb2.Empty()
+            response = stub.GetPlugData(request)
+            #logging.info(f"GetPlugData response: {response}")
+            return True
+        except grpc.RpcError as e:
+            logging.error(f"An error occurred during GetPlugData: {e.details()}")
+            logging.error(f"Error code: {e.code()}")
+            logging.error(f"Debug details: {e.debug_error_string()}")
+            return False
+
+    def test_temperature_data(stub):
+        try:
+            request = pb2.Empty()
+            response = stub.GetTemperatureData(request)
+            #logging.info(f"GetTemperatureData response: {response}")
+            return True
+        except grpc.RpcError as e:
+            logging.error(f"An error occurred during GetTemperatureData: {e.details()}")
+            logging.error(f"Error code: {e.code()}")
+            logging.error(f"Debug details: {e.debug_error_string()}")
+            return False
     grpc_server = "localhost:50051"  # Update with the actual gRPC server address
 
     # Create a channel and stub

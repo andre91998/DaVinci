@@ -23,6 +23,8 @@ using daVinciRPC::RPC_TemperatureDataArray;
 using daVinciRPC::RPC_ShellyPlusDimmerData ;
 using daVinciRPC::RPC_ShellyPlusPlugData;
 using daVinciRPC::RPC_ShellyPlusTemperatureData;
+using daVinciRPC::RPC_SensorArray;
+using daVinciRPC::RPC_Sensor;
 
 std::unique_ptr<Server> server;
 
@@ -31,24 +33,12 @@ DaVinciServiceImpl::DaVinciServiceImpl(Database* db) : db_(db) {}
 grpc::Status DaVinciServiceImpl::GetSupportedSensorTypes(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_SupportedSensorTypes* response) {
     std::vector<SensorType> sensor_types = {SensorType::SHELLY_TEMP, SensorType::SHELLY_DIMMER, SensorType::SHELLY_PLUG};
     for (const auto& type : sensor_types) {
-        std::string type_str;
-        switch (type) {
-            case SensorType::SHELLY_TEMP:
-                type_str = "ShellyPlusTemperature";
-                break;
-            case SensorType::SHELLY_DIMMER:
-                type_str = "ShellyPlusDimmer";
-                break;
-            case SensorType::SHELLY_PLUG:
-                type_str = "ShellyPlusPlug";
-                break;
-        }
-        response->add_sensor_types(type_str);
+        response->add_sensor_types(GetSensorTypeString(type));
     }
     return Status::OK;
 }
 
-grpc::Status DaVinciServiceImpl::GetSensorList(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_Sensors* response) {
+grpc::Status DaVinciServiceImpl::GetSensorList(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_SensorArray* response) {
     try {
         std::vector<std::string> tableList = db_->listTables();
         for (int i = 0; i < tableList.size(); i++) {
@@ -56,12 +46,16 @@ grpc::Status DaVinciServiceImpl::GetSensorList(grpc::ServerContext* context, con
             std::copy(sensorSubList.begin(), sensorSubList.end(), std::ostream_iterator<std::string>(std::cout, " "));
             std::cout << std::endl;
             for (int j = 0; j < sensorSubList.size(); j++) {
-                response->add_sensor_names(sensorSubList.at(j));
+                std::string sensor_type = tableList.at(i);
+                sensor_type[0] = std::toupper(sensor_type[0]);
+                daVinciRPC::RPC_Sensor* sensor = response->add_rpc_sensor();
+                sensor->set_sensor_name(sensorSubList.at(j));
+                sensor->set_sensor_type(sensor_type);
             }
         }
 
         return grpc::Status::OK;
-     
+
     } catch (const std::exception& e) {
         std::cerr << "Error in GetSensorList: " << e.what() << std::endl;
         return grpc::Status(grpc::StatusCode::INTERNAL, e.what());
@@ -157,4 +151,20 @@ std::vector<std::string> GetUniqueColumnValues(Database* db, const std::string& 
         std::cerr << "Error in GetUniqueColumnValues: " << e.what() << std::endl;
     }
     return uniqueValues;
+}
+
+std::string GetSensorTypeString(SensorType type) {
+    switch (type) {
+        case SensorType::SHELLY_TEMP:
+            return "ShellyPlusTemperature";
+            break;
+        case SensorType::SHELLY_DIMMER:
+            return "ShellyPlusDimmer";
+            break;
+        case SensorType::SHELLY_PLUG:
+            return "ShellyPlusPlug";
+            break;
+        default:
+            return "Unkown";
+    }
 }

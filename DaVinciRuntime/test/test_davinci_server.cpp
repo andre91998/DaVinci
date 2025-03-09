@@ -83,14 +83,17 @@ TEST_F(DaVinciServiceTest, GetSupportedSensorTypes) {
 TEST_F(DaVinciServiceTest, GetSensorList) {
     grpc::ServerContext context;
     daVinciRPC::Empty request;
-    daVinciRPC::RPC_Sensors response;
+    daVinciRPC::RPC_SensorArray response;
 
     grpc::Status status = service->GetSensorList(&context, &request, &response);
     ASSERT_TRUE(status.ok());
-    ASSERT_EQ(response.sensor_names_size(), 3);
-    EXPECT_EQ(response.sensor_names(0), "source1");
-    EXPECT_EQ(response.sensor_names(1), "source1");
-    EXPECT_EQ(response.sensor_names(2), "source1");
+    ASSERT_EQ(response.rpc_sensor_size(), 3);
+    EXPECT_EQ(response.rpc_sensor(0).sensor_name(), "source1");
+    EXPECT_EQ(response.rpc_sensor(0).sensor_type(), "ShellyDimmerData");
+    EXPECT_EQ(response.rpc_sensor(1).sensor_name(), "source1");
+    EXPECT_EQ(response.rpc_sensor(1).sensor_type(), "ShellyPlugData");
+    EXPECT_EQ(response.rpc_sensor(2).sensor_name(), "source1");
+    EXPECT_EQ(response.rpc_sensor(2).sensor_type(), "ShellyTemperatureData");
 }
 
 TEST_F(DaVinciServiceTest, RunServer) {
