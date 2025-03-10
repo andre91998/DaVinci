@@ -1,6 +1,7 @@
 package com.daVinci.hub;
 
-import davinci.io.grpc.RPC_Sensors;
+import android.util.Log;
+import davinci.io.grpc.RPC_SensorArray;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
@@ -12,6 +13,7 @@ import davinci.io.grpc.RPC_PlugDataArray;
 import davinci.io.grpc.RPC_TemperatureDataArray;
 
 public class GrpcClient {
+    private static final String TAG = "GrpcClient";
     private final ManagedChannel channel;
     private final DaVinciServiceGrpc.DaVinciServiceBlockingStub blockingStub;
 
@@ -28,16 +30,18 @@ public class GrpcClient {
             return blockingStub.getSupportedSensorTypes(request);
         } catch (StatusRuntimeException e) {
             // Handle exceptions as needed
+            Log.e(TAG, "Exception in getSupportedSensorTypes: " + e.getMessage());
             return null;
         }
     }
 
-    public RPC_Sensors getAllSensors() {
+    public RPC_SensorArray getAllSensors() {
         Empty request = Empty.newBuilder().build();
         try {
             return blockingStub.getSensorList(request);
         } catch (StatusRuntimeException e) {
             // Handle exceptions as needed
+            Log.e(TAG, "Exception in getAllSensors");
             return null;
         }
     }
@@ -50,6 +54,7 @@ public class GrpcClient {
             return blockingStub.getDimmerData(request);
         } catch (StatusRuntimeException e) {
             // Handle exceptions as needed
+            Log.e(TAG, "Exception in getDimmerData");
             return null;
         }
     }
@@ -60,6 +65,8 @@ public class GrpcClient {
             return blockingStub.getPlugData(request);
         } catch (StatusRuntimeException e) {
             // Handle exceptions as needed
+            Log.e(TAG, "Exception in getPlugData");
+
             return null;
         }
     }
@@ -70,6 +77,7 @@ public class GrpcClient {
             return blockingStub.getTemperatureData(request);
         } catch (StatusRuntimeException e) {
             // Handle exceptions as needed
+            Log.e(TAG, "Exception in getTemperatureData");
             return null;
         }
     }

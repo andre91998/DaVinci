@@ -28,7 +28,8 @@ public class GrpcClientTest {
 
     @BeforeEach
     public void setUp() {
-        grpcClient = new GrpcClient("localhost", 50051);
+        //grpcClient = new GrpcClient("75.6.165.166", 2026);
+        grpcClient = new GrpcClient("75.6.165.166", 50051);
         try {
             setGrpcClientBlockingStub(grpcClient, mockBlockingStub);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -67,13 +68,15 @@ public class GrpcClientTest {
 
     @Test
     public void testGetAllSensors() {
-        RPC_Sensors expectedResponse = RPC_Sensors.newBuilder()
-                .addSensorNames("Sensor1")
+        RPC_Sensor sensor = RPC_Sensor.newBuilder().setSensorName("sensor1").setSensorType("type1")
+                .build();
+        RPC_SensorArray expectedResponse = RPC_SensorArray.newBuilder()
+                .addRPCSensor(sensor)
                 .build();
 
         when(mockBlockingStub.getSensorList(any(Empty.class))).thenReturn(expectedResponse);
 
-        RPC_Sensors actualResponse = grpcClient.getAllSensors();
+        RPC_SensorArray actualResponse = grpcClient.getAllSensors();
         assertNotNull(actualResponse);
         assertEquals(expectedResponse, actualResponse);
     }
@@ -82,7 +85,7 @@ public class GrpcClientTest {
     public void testGetAllSensorsWithException() {
         when(mockBlockingStub.getSensorList(any(Empty.class))).thenThrow(StatusRuntimeException.class);
 
-        RPC_Sensors actualResponse = grpcClient.getAllSensors();
+        RPC_SensorArray actualResponse = grpcClient.getAllSensors();
         assertNull(actualResponse);
     }
 
