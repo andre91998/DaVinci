@@ -89,7 +89,7 @@ void MQTTClient::on_message(const std::string& topic, const std::string& payload
             if (processor->getType() == (int) SensorType::SHELLY_DIMMER) {
                 auto data = std::get<ShellyPlusDimmerData>(sensorData);
                 if (data.getSource().compare("stub") != 0) {
-                    db_->execute("INSERT INTO shellyDimmerData (source, brightness, state, timestamp) VALUES ('" +
+                    db_->execute("INSERT INTO shellyPlusDimmer (source, brightness, state, timestamp) VALUES ('" +
                                 data.getSource() + "', " +
                                 std::to_string(data.getBrightness()) + ", " +
                                 std::to_string(data.getState()) + ", " +
@@ -98,7 +98,7 @@ void MQTTClient::on_message(const std::string& topic, const std::string& payload
             } else if (processor->getType() == (int) SensorType::SHELLY_PLUG) {
                 auto data = std::get<ShellyPlusPlugData>(sensorData);
                 if (data.getSource().compare("stub") != 0) {
-                    db_->execute("INSERT INTO shellyPlugData (source, power, timestamp) VALUES ('" +
+                    db_->execute("INSERT INTO shellyPlusPlug (source, power, timestamp) VALUES ('" +
                                 data.getSource() + "', " +
                                 std::to_string(data.getPower()) + ", " +
                                 std::to_string(data.getTimestamp()) + ")");
@@ -106,7 +106,7 @@ void MQTTClient::on_message(const std::string& topic, const std::string& payload
             } else if (processor->getType() == (int) SensorType::SHELLY_TEMP) {
                 auto data = std::get<ShellyPlusTemperatureData>(sensorData);
                 if (data.getSource().compare("stub") != 0) {
-                    db_->execute("INSERT INTO shellyTemperatureData (source, humidity, temperature, timestamp) VALUES ('" +
+                    db_->execute("INSERT INTO shellyPlusTemperature (source, humidity, temperature, timestamp) VALUES ('" +
                                 data.getSource() + "', " +
                                 std::to_string(data.getTemperature()) + ", " +
                                 std::to_string(data.getHumidity()) + ", " +
