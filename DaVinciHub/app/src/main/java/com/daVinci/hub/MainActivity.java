@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import com.daVinci.hub.util.SensorRecyclerViewAdapter;
@@ -24,18 +23,19 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import davinci.io.grpc.RPC_DimmerDataArray;
 import davinci.io.grpc.RPC_PlugDataArray;
-import davinci.io.grpc.RPC_Sensors;
+import davinci.io.grpc.RPC_SensorArray;
 import davinci.io.grpc.RPC_SupportedSensorTypes;
 import davinci.io.grpc.RPC_TemperatureDataArray;
 
 public class MainActivity extends AppCompatActivity {
   private static final String TAG = "MainActivity";
   private RecyclerView mSensorListView;
-  private List<String> mSensorList;
-  private SensorRecyclerViewAdapter mAdapter;
+  private RPC_SensorArray mSensorList;
+  private SensorRecyclerViewAdapter adapter;
   private GrpcClient grpcClient;
   private ExecutorService mExecutor;
 
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     Future<List<String>> sensorTypesFuture = mExecutor.submit(sensorTypesCallable);
 
     // Reference the Toggle Button and Slider
-    SwitchCompat toggleSpinner = findViewById(R.id.toggle_spinner);
+    SwitchCompat toggleSlider = findViewById(R.id.toggle_spinner);
     Spinner sensorTypeSpinner = findViewById(R.id.spinner4);
 
     /*
@@ -64,10 +64,10 @@ public class MainActivity extends AppCompatActivity {
      */
     mSensorListView = findViewById(R.id.sensorListView);
     mSensorListView.setLayoutManager(new LinearLayoutManager(this));
-    mSensorList = new ArrayList<>();
+    mSensorList = RPC_SensorArray.newBuilder().build();
 
-    //mAdapter = new SensorRecyclerViewAdapter(mSensorList); // Initialize adapter with mScopeList
-    //mSensorListView.setAdapter(adapter);
+    adapter = new SensorRecyclerViewAdapter(mSensorList); // Initialize adapter with mScopeList
+    mSensorListView.setAdapter(adapter);
 
     //Get all sensor types via GRPC
     List<String> sensorTypes = new ArrayList<>();
@@ -84,43 +84,24 @@ public class MainActivity extends AppCompatActivity {
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     // Apply the adapter to the spinner.
     sensorTypeSpinner.setAdapter(adapter);
-    if (toggleSpinner.isChecked()) {
-      sensorTypeSpinner.setVisibility(View.VISIBLE);
-    } else {
-      sensorTypeSpinner.setVisibility(View.GONE);
-    }
-    sensorTypeSpinner.setActivated(toggleSpinner.isChecked());
-    sensorTypeSpinner.setEnabled(toggleSpinner.isChecked());
-    sensorTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-      public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-      {
-          //String selectedSensorType = parent.getItemAtPosition(position).toString();
-          String selectedSensorType = (String) sensorTypeSpinner.getSelectedItem();
-          updateRecyclerView(filterSensorsByType(selectedSensorType));
-      }
-      public void onNothingSelected(AdapterView<?> parent)
-      {
-        updateRecyclerView(new ArrayList<>(mSensorList));
-      }
-    });
+    sensorTypeSpinner.setVisibility(View.VISIBLE);
 
     // Set a listener for the toggle button
-    toggleSpinner.setOnCheckedChangeListener((buttonView, isChecked) -> {
+    toggleSlider.setOnCheckedChangeListener((buttonView, isChecked) -> {
       // Enable or disable the slider based on the toggle button state
       sensorTypeSpinner.setEnabled(isChecked);
       sensorTypeSpinner.setActivated(isChecked);
       if (!isChecked) {
-        sensorTypeSpinner.setVisibility(View.GONE);
-        //Logic for show all sensors in system
-        updateRecyclerView(new ArrayList<>(mSensorList));
-
+        //TODO: Logic for show all sensors in system
+        updateRecyclerView(mSensorList);
       } else {
-        sensorTypeSpinner.setVisibility(View.VISIBLE);
-        //Logic for show filtered sensor list
+        //TODO: Logic for show filtered sensor list
         String selectedSensorType = (String) sensorTypeSpinner.getSelectedItem();
         updateRecyclerView(filterSensorsByType(selectedSensorType));
       }
     });
+
+    //TODO: Add on event callback for sensor type spinner?
 
     // Set up the RecyclerView
     setupRecyclerView();
@@ -131,25 +112,29 @@ public class MainActivity extends AppCompatActivity {
    * @param type
    * @return filtered list of scopes
    */
-  private ArrayList<String> filterSensorsByType(String type) {
+  private RPC_SensorArray filterSensorsByType(String type) {
     //TODO: add filtering logic will require string mapping
-    return new ArrayList<>(mSensorList.stream().filter());
+    Log.d(TAG, "type: " + type);
+    return RPC_SensorArray.newBuilder().addAllRPCSensor(mSensorList.getRPCSensorList().stream()
+            .filter(s -> s.getSensorType().equalsIgnoreCase(type))
+            .collect(Collectors.toList())).build();
   }
 
   /**
    * Method to update the Scope List view UI dynamically as the filter changes
    * @param filteredSensors
    */
-  private void updateRecyclerView(ArrayList<String> filteredSensors) {
-    mAdapter = new SensorRecyclerViewAdapter(filteredSensors);
+  private void updateRecyclerView(RPC_SensorArray filteredSensors) {
+    SensorRecyclerViewAdapter mAdapter = new SensorRecyclerViewAdapter(filteredSensors);
     mSensorListView.setAdapter(mAdapter);
     mSensorListView.setLayoutManager(new LinearLayoutManager(this));
+    //adapter.updateData(filteredScopes); // Create an `updateData` method in your adapter to refresh the list.
   }
 
   @Override
   public void onResume(){
     super.onResume();
-    //setupRecyclerView();
+    setupRecyclerView();
   }
 
   @Override
@@ -165,26 +150,24 @@ public class MainActivity extends AppCompatActivity {
   private void setupRecyclerView() {
     //Query the GRPC for all scopes and populate the list
     GetSensorsCallable sensorsCallable = new GetSensorsCallable();
-    Future<RPC_Sensors> sensorsFuture = mExecutor.submit(sensorsCallable);
+    Future<RPC_SensorArray> sensorsFuture = mExecutor.submit(sensorsCallable);
     try {
-      mSensorList = sensorsFuture.get().getSensorNamesList();
+      mSensorList = sensorsFuture.get();
       Log.d(TAG, mSensorList.toString());
     } catch (ExecutionException | InterruptedException e) {
       e.printStackTrace();
     }
 
     // Check if the list is empty and display a message if needed
-    if (mSensorList == null || mSensorList.isEmpty()) {
+    if (mSensorList == null || mSensorList.getRPCSensorList().isEmpty()) {
       // Handle empty state, e.g., show a placeholder view or a message
       // This can be a TextView or other UI element to indicate "No data available"
       Log.d(TAG, "empty sensor list");
     } else {
       // Set up the adapter and layout manager for the RecyclerView
-      Log.d(TAG, "setting up recycler view");
-      updateRecyclerView(new ArrayList<>(mSensorList));
-//      mAdapter = new SensorRecyclerViewAdapter(new ArrayList<>(mSensorList));
-//      mSensorListView.setAdapter(mAdapter);
-//      mSensorListView.setLayoutManager(new LinearLayoutManager(this));
+      SensorRecyclerViewAdapter mAdapter = new SensorRecyclerViewAdapter(mSensorList);
+      mSensorListView.setAdapter(mAdapter);
+      mSensorListView.setLayoutManager(new LinearLayoutManager(this));
     }
   }
 
@@ -215,28 +198,28 @@ public class MainActivity extends AppCompatActivity {
   class GetDimmerDataCallable implements Callable<RPC_DimmerDataArray> {
     @Override
     public RPC_DimmerDataArray call() throws Exception {
-        return grpcClient.getDimmerData();
+      return grpcClient.getDimmerData();
     }
   }
 
   class GetTemperatureDataCallable implements Callable<RPC_TemperatureDataArray> {
     @Override
     public RPC_TemperatureDataArray call() throws Exception {
-        return grpcClient.getTemperatureData();
+      return grpcClient.getTemperatureData();
     }
   }
 
   class GetPlugDataCallable implements Callable<RPC_PlugDataArray> {
     @Override
     public RPC_PlugDataArray call() throws Exception {
-        return grpcClient.getPlugData();
+      return grpcClient.getPlugData();
     }
   }
 
-  class GetSensorsCallable implements Callable<RPC_Sensors> {
+  class GetSensorsCallable implements Callable<RPC_SensorArray> {
     @Override
-    public RPC_Sensors call() throws Exception {
-        return grpcClient.getAllSensors();
+    public RPC_SensorArray call() throws Exception {
+      return grpcClient.getAllSensors();
     }
   }
 

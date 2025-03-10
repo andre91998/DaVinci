@@ -13,11 +13,13 @@ import com.daVinci.hub.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import davinci.io.grpc.RPC_SensorArray;
+
 public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecyclerViewAdapter.MyViewHolder> {
 
-    private List<String> mSensorList;
+    private RPC_SensorArray mSensorList;
 
-    public SensorRecyclerViewAdapter(List<String> scopeList) {
+    public SensorRecyclerViewAdapter(RPC_SensorArray scopeList) {
         mSensorList = scopeList;
     }
 
@@ -33,20 +35,20 @@ public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecycl
     public void onBindViewHolder(final MyViewHolder holder, int position) {
 
         //final Scope scope = mScopeList.get(position);
-        String sensor  = mSensorList.get(position); // `items` is your data list
+        String sensor  = mSensorList.getRPCSensorList().get(position).getSensorName();
 
         // Set data for the views
         holder.titleTextView.setText(sensor);    }
 
     @Override
     public int getItemCount() {
-        if(mSensorList == null || mSensorList.isEmpty()) {
+        if(mSensorList == null || mSensorList.getRPCSensorList().isEmpty()) {
             return 0;
         } else {
-            return mSensorList.size();
+            return mSensorList.getRPCSensorCount();
         }
     }
-    public void updateData(ArrayList<String> newSensors) {
+    public void updateData(RPC_SensorArray newSensors) {
         mSensorList = newSensors;
         notifyDataSetChanged();
     }

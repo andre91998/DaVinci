@@ -1,8 +1,7 @@
 package com.daVinci.hub;
 
 import android.util.Log;
-
-import davinci.io.grpc.RPC_Sensors;
+import davinci.io.grpc.RPC_SensorArray;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
@@ -36,7 +35,7 @@ public class GrpcClient {
         }
     }
 
-    public RPC_Sensors getAllSensors() {
+    public RPC_SensorArray getAllSensors() {
         Empty request = Empty.newBuilder().build();
         try {
             return blockingStub.getSensorList(request);
