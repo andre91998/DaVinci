@@ -90,6 +90,8 @@ dependencies {
 
     implementation libs.androidx.compose.ui.tooling
 
+    implementation libs.mpandroidchart
+
     //screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 
     testImplementation libs.mockito.core

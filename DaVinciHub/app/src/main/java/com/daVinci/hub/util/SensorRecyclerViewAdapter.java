@@ -1,26 +1,31 @@
 package com.daVinci.hub.util;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.daVinci.hub.R;
-import java.util.ArrayList;
-import java.util.List;
+import com.daVinci.hub.ViewTemperatureDataActivity;
 
 import davinci.io.grpc.RPC_SensorArray;
 
 public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecyclerViewAdapter.MyViewHolder> {
 
     private RPC_SensorArray mSensorList;
+    private Context mContext;
 
-    public SensorRecyclerViewAdapter(RPC_SensorArray scopeList) {
+    public SensorRecyclerViewAdapter(RPC_SensorArray scopeList, Context context) {
         mSensorList = scopeList;
+        mContext = context;
     }
 
     @Override
@@ -38,7 +43,16 @@ public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecycl
         String sensor  = mSensorList.getRPCSensorList().get(position).getSensorName();
 
         // Set data for the views
-        holder.titleTextView.setText(sensor);    }
+        holder.titleTextView.setText(sensor);
+
+        //On Click listener for entire holder rather than just the text view
+        holder.itemView.setOnClickListener(v -> {
+            //TODO: Launch view sensor data activity
+            Intent intent = new Intent(mContext.getApplicationContext(), ViewTemperatureDataActivity.class);
+            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+            mContext.startActivity(intent);
+        });
+    }
 
     @Override
     public int getItemCount() {

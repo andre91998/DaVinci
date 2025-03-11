@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     mSensorListView.setLayoutManager(new LinearLayoutManager(this));
     mSensorList = RPC_SensorArray.newBuilder().build();
 
-    mAdapter = new SensorRecyclerViewAdapter(mSensorList); // Initialize adapter with mScopeList
+    mAdapter = new SensorRecyclerViewAdapter(mSensorList, getApplicationContext()); // Initialize adapter with mScopeList
     mSensorListView.setAdapter(mAdapter);
 
     //Get all sensor types via GRPC
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
    * @param filteredSensors
    */
   private void updateRecyclerView(RPC_SensorArray filteredSensors) {
-    mAdapter = new SensorRecyclerViewAdapter(filteredSensors);
+    mAdapter = new SensorRecyclerViewAdapter(filteredSensors, getApplicationContext());
     mSensorListView.setAdapter(mAdapter);
     mSensorListView.setLayoutManager(new LinearLayoutManager(this));
   }
@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
       Log.d(TAG, "empty sensor list");
     } else {
       // Set up the adapter and layout manager for the RecyclerView
-      SensorRecyclerViewAdapter mAdapter = new SensorRecyclerViewAdapter(mSensorList);
+      SensorRecyclerViewAdapter mAdapter = new SensorRecyclerViewAdapter(mSensorList, getApplicationContext());
       mSensorListView.setAdapter(mAdapter);
       mSensorListView.setLayoutManager(new LinearLayoutManager(this));
     }

@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="16dp"
-            android:text="@string/app_name"
+            android:text="@string/main_activity"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@color/light_gray"
             tools:ignore="VisualLintBounds" />
@@ -67,18 +67,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="515dp" />
         </FrameLayout>
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="100dp">
-            <!-- Floating Action Button to add scope -->
-            <Button
-                android:id="@+id/button6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="View Sensor Data" />
-
-            <!-- Floating Action Button to add scope -->
-        </RelativeLayout>
 
     </LinearLayout>
 </androidx.drawerlayout.widget.DrawerLayout>
