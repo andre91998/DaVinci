@@ -46,7 +46,9 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.activity_main);
 
     //Hard Coded local address for now
-    grpcClient = new GrpcClient("192.168.86.73", 50051); // Adjust as needed
+    grpcClient = new GrpcClient("75.6.165.166", 2026); // Adjust as needed
+
+    
 
     mExecutor = Executors.newFixedThreadPool(1);
 
