@@ -55,6 +55,7 @@ public class ViewTemperatureDataActivity extends AppCompatActivity {
         }
 
         TextView currentTemperature = findViewById(R.id.currentTemperature);
+        TextView currentHumidity = findViewById(R.id.currentHumidity);
 
         ArrayList<Entry> tempValues = new ArrayList<>();
         ArrayList<Entry> humidityValues = new ArrayList<>();
