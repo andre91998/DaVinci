@@ -31,6 +31,9 @@ public class ViewTemperatureDataActivity extends AppCompatActivity {
         mChart = findViewById(R.id.chart);
         mChart.setTouchEnabled(true);
         mChart.setPinchZoom(true);
+        mChart.getXAxis().setTextColor(Color.WHITE);
+        mChart.getAxisLeft().setTextColor(Color.WHITE);
+        mChart.getAxisRight().setTextColor(Color.WHITE);
 
         ArrayList<Entry> values = new ArrayList<>();
         values.add(new Entry(1, 50));
@@ -46,24 +49,24 @@ public class ViewTemperatureDataActivity extends AppCompatActivity {
         } else {
             set1 = new LineDataSet(values, "Sample Data");
             set1.setDrawIcons(false);
-            set1.enableDashedLine(10f, 5f, 0f);
-            set1.enableDashedHighlightLine(10f, 5f, 0f);
-            set1.setColor(Color.DKGRAY);
-            set1.setCircleColor(Color.DKGRAY);
+            //set1.enableDashedLine(10f, 5f, 0f);
+            //set1.enableDashedHighlightLine(10f, 5f, 0f);
+            set1.setColor(Color.CYAN);
+            set1.setCircleColor(Color.CYAN);
             set1.setLineWidth(1f);
             set1.setCircleRadius(3f);
             set1.setDrawCircleHole(false);
             set1.setValueTextSize(9f);
             set1.setDrawFilled(true);
             set1.setFormLineWidth(1f);
-            set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+            //set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
             set1.setFormSize(15.f);
-            if (Utils.getSDKInt() >= 18) {
-                Drawable drawable = ContextCompat.getDrawable(this, R.drawable.fade_blue);
-                set1.setFillDrawable(drawable);
-            } else {
-                set1.setFillColor(Color.DKGRAY);
-            }
+//            if (Utils.getSDKInt() >= 18) {
+//                Drawable drawable = ContextCompat.getDrawable(this, R.drawable.fade_blue);
+//                set1.setFillDrawable(drawable);
+//            } else {
+//                set1.setFillColor(Color.DKGRAY);
+//            }
             ArrayList<ILineDataSet> dataSets = new ArrayList<>();
             dataSets.add(set1);
             LineData data = new LineData(dataSets);
