@@ -31,7 +31,7 @@ public class GrpcClient {
         } catch (StatusRuntimeException e) {
             // Handle exceptions as needed
             Log.e(TAG, "Exception in getSupportedSensorTypes: " + e.getMessage());
-            return null;
+            return RPC_SupportedSensorTypes.newBuilder().build();
         }
     }
 
@@ -41,8 +41,8 @@ public class GrpcClient {
             return blockingStub.getSensorList(request);
         } catch (StatusRuntimeException e) {
             // Handle exceptions as needed
-            Log.e(TAG, "Exception in getAllSensors");
-            return null;
+            Log.e(TAG, "Exception in getAllSensors:  " + e.getMessage());
+            return RPC_SensorArray.newBuilder().build();
         }
     }
 
@@ -54,8 +54,8 @@ public class GrpcClient {
             return blockingStub.getDimmerData(request);
         } catch (StatusRuntimeException e) {
             // Handle exceptions as needed
-            Log.e(TAG, "Exception in getDimmerData");
-            return null;
+            Log.e(TAG, "Exception in getDimmerData: " + e.getMessage());
+            return RPC_DimmerDataArray.newBuilder().build();
         }
     }
 
@@ -65,9 +65,9 @@ public class GrpcClient {
             return blockingStub.getPlugData(request);
         } catch (StatusRuntimeException e) {
             // Handle exceptions as needed
-            Log.e(TAG, "Exception in getPlugData");
+            Log.e(TAG, "Exception in getPlugData: " + e.getMessage());
 
-            return null;
+            return RPC_PlugDataArray.newBuilder().build();
         }
     }
 
@@ -77,8 +77,8 @@ public class GrpcClient {
             return blockingStub.getTemperatureData(request);
         } catch (StatusRuntimeException e) {
             // Handle exceptions as needed
-            Log.e(TAG, "Exception in getTemperatureData");
-            return null;
+            Log.e(TAG, "Exception in getTemperatureData: " + e.getMessage());
+            return RPC_TemperatureDataArray.newBuilder().build();
         }
     }
 

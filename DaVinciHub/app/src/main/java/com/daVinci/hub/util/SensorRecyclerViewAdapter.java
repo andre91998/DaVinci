@@ -50,6 +50,7 @@ public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecycl
             //TODO: Launch view sensor data activity
             Intent intent = new Intent(mContext.getApplicationContext(), ViewTemperatureDataActivity.class);
             intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("sensorName", sensor);
             mContext.startActivity(intent);
         });
     }
