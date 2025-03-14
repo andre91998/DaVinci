@@ -27,27 +27,29 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import davinci.io.grpc.RPC_DimmerDataArray;
+import davinci.io.grpc.RPC_ShellyPlusDimmerData;
 import davinci.io.grpc.RPC_ShellyPlusTemperatureData;
 import davinci.io.grpc.RPC_TemperatureDataArray;
 
-public class ViewTemperatureDataActivity extends AppCompatActivity {
+public class ViewDimmerDataActivity extends AppCompatActivity {
 
-    private String TAG = "ViewTemperatureDataActivity";
+    private String TAG = "ViewDimmerDataActivity";
     private LineChart mChart;
     private GrpcClient mGrpcClient;
     private ExecutorService mExecutor;
-    private RPC_TemperatureDataArray mTemperatureDataArray;
+    private RPC_DimmerDataArray mDimmerDataArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_viewtemperaturedata);
+        setContentView(R.layout.activity_viewdimmerdata);
 
         //Hard Coded local address for now
         mGrpcClient = new GrpcClient("75.6.165.166", 2026); // Adjust as needed
         mExecutor = Executors.newFixedThreadPool(1);
-        GetTemperatureDataCallable temperatureDataCallable = new GetTemperatureDataCallable();
-        Future<RPC_TemperatureDataArray> temperatureDataFuture = mExecutor.submit(temperatureDataCallable);
+        GetDimmerDataCallable dimmerDataCallable = new GetDimmerDataCallable();
+        Future<RPC_DimmerDataArray> dimmerDataFuture = mExecutor.submit(dimmerDataCallable);
 
         TextView sensorName = findViewById(R.id.titleBar);
         String name = getIntent().getStringExtra("sensorName");
@@ -55,23 +57,21 @@ public class ViewTemperatureDataActivity extends AppCompatActivity {
             sensorName.setText(String.format("Sensor Name: %s", name));
         }
 
-        TextView currentTemperature = findViewById(R.id.currentTemperature);
-        TextView currentHumidity = findViewById(R.id.currentHumidity);
+        TextView currentBrightness = findViewById(R.id.currentBrightness);
+        TextView currentState = findViewById(R.id.currentState);
 
-        ArrayList<Entry> tempValues = new ArrayList<>();
-        ArrayList<Entry> humidityValues = new ArrayList<>();
-        //TODO: fix humidity and temperature are swapped for some reason (runtime?)
+        ArrayList<Entry> brightnessValues = new ArrayList<>();
+
         try {
-            mTemperatureDataArray = temperatureDataFuture.get();
-            if(mTemperatureDataArray != null && !mTemperatureDataArray.getTemperatureDataList().isEmpty()) {
-                for (int i = 0; i < mTemperatureDataArray.getTemperatureDataCount(); i++) {
-                    RPC_ShellyPlusTemperatureData tempData = mTemperatureDataArray.getTemperatureData(i);
+            mDimmerDataArray = dimmerDataFuture.get();
+            if(mDimmerDataArray != null && !mDimmerDataArray.getDimmerDataList().isEmpty()) {
+                for (int i = 0; i < mDimmerDataArray.getDimmerDataCount(); i++) {
+                    RPC_ShellyPlusDimmerData brightnessData = mDimmerDataArray.getDimmerData(i);
                     //might have to divide ts by 1000 for formatting
-                    tempValues.add(new Entry((float) tempData.getTimestamp(), (float) tempData.getTemperature()));
-                    humidityValues.add(new Entry((float) tempData.getTimestamp(), (float) tempData.getHumidity()));
-                    if (i == mTemperatureDataArray.getTemperatureDataCount() - 1) {
-                        currentTemperature.setText(String.format("Current Temperature: %s", tempData.getTemperature() + "°C"));
-                        currentHumidity.setText(String.format("Current Humidity: %s", tempData.getHumidity() + "%"));
+                    brightnessValues.add(new Entry((float) brightnessData.getTimestamp(), (float) brightnessData.getBrightness()));
+                    if (i == mDimmerDataArray.getDimmerDataCount() - 1) {
+                        currentBrightness.setText(String.format("Current Brightness: %s", brightnessData.getBrightness() + "%"));
+                        currentState.setText(String.format("Current State: " + (brightnessData.getState() ? "On" : "Off")));
                     }
                 }
             } else {
@@ -91,17 +91,14 @@ public class ViewTemperatureDataActivity extends AppCompatActivity {
         mChart.getAxisRight().setTextColor(Color.WHITE);
 
         LineDataSet set1;
-        LineDataSet set2;
         if (mChart.getData() != null &&
                 mChart.getData().getDataSetCount() > 0) {
             set1 = (LineDataSet) mChart.getData().getDataSetByIndex(0);
-            set1.setValues(tempValues);
-            set2 = (LineDataSet) mChart.getData().getDataSetByIndex(1);
-            set2.setValues(humidityValues);
+            set1.setValues(brightnessValues);;
             mChart.getData().notifyDataChanged();
             mChart.notifyDataSetChanged();
         } else {
-            set1 = new LineDataSet(tempValues, "Temperature Data");
+            set1 = new LineDataSet(brightnessValues, "Dimmer Data");
             set1.setDrawIcons(false);
             //set1.enableDashedLine(10f, 5f, 0f);
             //set1.enableDashedHighlightLine(10f, 5f, 0f);
@@ -124,29 +121,17 @@ public class ViewTemperatureDataActivity extends AppCompatActivity {
             ArrayList<ILineDataSet> dataSets = new ArrayList<>();
             dataSets.add(set1);
 
-            set2 = new LineDataSet(humidityValues, "Humidity Data");
-            set2.setDrawIcons(false);
-            set2.setColor(Color.CYAN);
-            set2.setCircleColor(Color.CYAN);
-            set2.setLineWidth(1f);
-            set2.setCircleRadius(3f);
-            set2.setDrawCircleHole(false);
-            set2.setValueTextSize(9f);
-            set2.setDrawFilled(true);
-            set2.setFormLineWidth(1f);
-            set2.setFormSize(15.f);
-            dataSets.add(set2);
-
             LineData data = new LineData(dataSets);
             mChart.setData(data);
         }
     }
 
-    class GetTemperatureDataCallable implements Callable<RPC_TemperatureDataArray> {
+    class GetDimmerDataCallable implements Callable<RPC_DimmerDataArray> {
         @Override
-        public RPC_TemperatureDataArray call() throws Exception {
-            return mGrpcClient.getTemperatureData();
+        public RPC_DimmerDataArray call() throws Exception {
+            return mGrpcClient.getDimmerData();
         }
     }
 
 }
+

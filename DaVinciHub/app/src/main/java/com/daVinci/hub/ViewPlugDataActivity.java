@@ -27,27 +27,29 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import davinci.io.grpc.RPC_PlugDataArray;
+import davinci.io.grpc.RPC_ShellyPlusPlugData;
 import davinci.io.grpc.RPC_ShellyPlusTemperatureData;
 import davinci.io.grpc.RPC_TemperatureDataArray;
 
-public class ViewTemperatureDataActivity extends AppCompatActivity {
+public class ViewPlugDataActivity extends AppCompatActivity {
 
-    private String TAG = "ViewTemperatureDataActivity";
+    private String TAG = "ViewPlugDataActivity";
     private LineChart mChart;
     private GrpcClient mGrpcClient;
     private ExecutorService mExecutor;
-    private RPC_TemperatureDataArray mTemperatureDataArray;
+    private RPC_PlugDataArray mPlugDataArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_viewtemperaturedata);
+        setContentView(R.layout.activity_viewplugdata);
 
         //Hard Coded local address for now
         mGrpcClient = new GrpcClient("75.6.165.166", 2026); // Adjust as needed
         mExecutor = Executors.newFixedThreadPool(1);
-        GetTemperatureDataCallable temperatureDataCallable = new GetTemperatureDataCallable();
-        Future<RPC_TemperatureDataArray> temperatureDataFuture = mExecutor.submit(temperatureDataCallable);
+        GetPlugDataCallable plugDataCallable = new GetPlugDataCallable();
+        Future<RPC_PlugDataArray> plugDataFuture = mExecutor.submit(plugDataCallable);
 
         TextView sensorName = findViewById(R.id.titleBar);
         String name = getIntent().getStringExtra("sensorName");
@@ -55,23 +57,18 @@ public class ViewTemperatureDataActivity extends AppCompatActivity {
             sensorName.setText(String.format("Sensor Name: %s", name));
         }
 
-        TextView currentTemperature = findViewById(R.id.currentTemperature);
-        TextView currentHumidity = findViewById(R.id.currentHumidity);
+        TextView currentPower = findViewById(R.id.currentPower);
 
-        ArrayList<Entry> tempValues = new ArrayList<>();
-        ArrayList<Entry> humidityValues = new ArrayList<>();
-        //TODO: fix humidity and temperature are swapped for some reason (runtime?)
+        ArrayList<Entry> plugValues = new ArrayList<>();
         try {
-            mTemperatureDataArray = temperatureDataFuture.get();
-            if(mTemperatureDataArray != null && !mTemperatureDataArray.getTemperatureDataList().isEmpty()) {
-                for (int i = 0; i < mTemperatureDataArray.getTemperatureDataCount(); i++) {
-                    RPC_ShellyPlusTemperatureData tempData = mTemperatureDataArray.getTemperatureData(i);
+            mPlugDataArray = plugDataFuture.get();
+            if(mPlugDataArray != null && !mPlugDataArray.getPlugDataList().isEmpty()) {
+                for (int i = 0; i < mPlugDataArray.getPlugDataCount(); i++) {
+                    RPC_ShellyPlusPlugData plugData = mPlugDataArray.getPlugData(i);
                     //might have to divide ts by 1000 for formatting
-                    tempValues.add(new Entry((float) tempData.getTimestamp(), (float) tempData.getTemperature()));
-                    humidityValues.add(new Entry((float) tempData.getTimestamp(), (float) tempData.getHumidity()));
-                    if (i == mTemperatureDataArray.getTemperatureDataCount() - 1) {
-                        currentTemperature.setText(String.format("Current Temperature: %s", tempData.getTemperature() + "°C"));
-                        currentHumidity.setText(String.format("Current Humidity: %s", tempData.getHumidity() + "%"));
+                    plugValues.add(new Entry((float) plugData.getTimestamp(), (float) plugData.getPower()));
+                    if (i == mPlugDataArray.getPlugDataCount() - 1) {
+                        currentPower.setText(String.format("Current Power Output: %s", plugData.getPower() + " W"));
                     }
                 }
             } else {
@@ -91,17 +88,14 @@ public class ViewTemperatureDataActivity extends AppCompatActivity {
         mChart.getAxisRight().setTextColor(Color.WHITE);
 
         LineDataSet set1;
-        LineDataSet set2;
         if (mChart.getData() != null &&
                 mChart.getData().getDataSetCount() > 0) {
             set1 = (LineDataSet) mChart.getData().getDataSetByIndex(0);
-            set1.setValues(tempValues);
-            set2 = (LineDataSet) mChart.getData().getDataSetByIndex(1);
-            set2.setValues(humidityValues);
+            set1.setValues(plugValues);
             mChart.getData().notifyDataChanged();
             mChart.notifyDataSetChanged();
         } else {
-            set1 = new LineDataSet(tempValues, "Temperature Data");
+            set1 = new LineDataSet(plugValues, "Plug Data");
             set1.setDrawIcons(false);
             //set1.enableDashedLine(10f, 5f, 0f);
             //set1.enableDashedHighlightLine(10f, 5f, 0f);
@@ -124,28 +118,15 @@ public class ViewTemperatureDataActivity extends AppCompatActivity {
             ArrayList<ILineDataSet> dataSets = new ArrayList<>();
             dataSets.add(set1);
 
-            set2 = new LineDataSet(humidityValues, "Humidity Data");
-            set2.setDrawIcons(false);
-            set2.setColor(Color.CYAN);
-            set2.setCircleColor(Color.CYAN);
-            set2.setLineWidth(1f);
-            set2.setCircleRadius(3f);
-            set2.setDrawCircleHole(false);
-            set2.setValueTextSize(9f);
-            set2.setDrawFilled(true);
-            set2.setFormLineWidth(1f);
-            set2.setFormSize(15.f);
-            dataSets.add(set2);
-
             LineData data = new LineData(dataSets);
             mChart.setData(data);
         }
     }
 
-    class GetTemperatureDataCallable implements Callable<RPC_TemperatureDataArray> {
+    class GetPlugDataCallable implements Callable<RPC_PlugDataArray> {
         @Override
-        public RPC_TemperatureDataArray call() throws Exception {
-            return mGrpcClient.getTemperatureData();
+        public RPC_PlugDataArray call() throws Exception {
+            return mGrpcClient.getPlugData();
         }
     }
 

@@ -189,27 +189,6 @@ public class MainActivity extends AppCompatActivity {
     }
   }
 
-  class GetDimmerDataCallable implements Callable<RPC_DimmerDataArray> {
-    @Override
-    public RPC_DimmerDataArray call() throws Exception {
-      return grpcClient.getDimmerData();
-    }
-  }
-
-  class GetTemperatureDataCallable implements Callable<RPC_TemperatureDataArray> {
-    @Override
-    public RPC_TemperatureDataArray call() throws Exception {
-      return grpcClient.getTemperatureData();
-    }
-  }
-
-  class GetPlugDataCallable implements Callable<RPC_PlugDataArray> {
-    @Override
-    public RPC_PlugDataArray call() throws Exception {
-      return grpcClient.getPlugData();
-    }
-  }
-
   class GetSensorsCallable implements Callable<RPC_SensorArray> {
     @Override
     public RPC_SensorArray call() throws Exception {

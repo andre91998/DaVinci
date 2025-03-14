@@ -26,6 +26,14 @@
             android:name=".ViewTemperatureDataActivity"
             android:exported="true">
         </activity>
+        <activity
+            android:name=".ViewPlugDataActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".ViewDimmerDataActivity"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>

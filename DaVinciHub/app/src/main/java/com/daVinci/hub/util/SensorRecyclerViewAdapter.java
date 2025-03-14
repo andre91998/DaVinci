@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.daVinci.hub.R;
+import com.daVinci.hub.ViewDimmerDataActivity;
+import com.daVinci.hub.ViewPlugDataActivity;
 import com.daVinci.hub.ViewTemperatureDataActivity;
 
 import davinci.io.grpc.RPC_SensorArray;
@@ -48,10 +50,28 @@ public class SensorRecyclerViewAdapter extends RecyclerView.Adapter<SensorRecycl
         //On Click listener for entire holder rather than just the text view
         holder.itemView.setOnClickListener(v -> {
             //TODO: Launch view sensor data activity
-            Intent intent = new Intent(mContext.getApplicationContext(), ViewTemperatureDataActivity.class);
-            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra("sensorName", sensor);
-            mContext.startActivity(intent);
+            Intent intent;
+            switch (mSensorList.getRPCSensorList().get(position).getSensorType()){
+                case "ShellyPlusTemperature":
+                    intent = new Intent(mContext.getApplicationContext(), ViewTemperatureDataActivity.class);
+                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("sensorName", sensor);
+                    mContext.startActivity(intent);
+                    break;
+                case "ShellyPlusDimmer":
+                    intent = new Intent(mContext.getApplicationContext(), ViewDimmerDataActivity.class);
+                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("sensorName", sensor);
+                    mContext.startActivity(intent);
+                    break;
+                case "ShellyPlusPlug":
+                    intent = new Intent(mContext.getApplicationContext(), ViewPlugDataActivity.class);
+                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("sensorName", sensor);
+                    mContext.startActivity(intent);
+                    break;
+            }
+
         });
     }
 
