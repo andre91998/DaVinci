@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -39,6 +40,12 @@ public class ViewDimmerDataActivity extends AppCompatActivity {
     private GrpcClient mGrpcClient;
     private ExecutorService mExecutor;
     private RPC_DimmerDataArray mDimmerDataArray;
+    private Future<RPC_DimmerDataArray> mDimmerDataFuture;
+    private TextView currentBrightness, currentState;
+    private RPC_ShellyPlusDimmerData latestBrightnessData;
+    //TODO: all thread logic
+    private Handler mHandler;
+    private Thread updateDataThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +56,7 @@ public class ViewDimmerDataActivity extends AppCompatActivity {
         mGrpcClient = new GrpcClient("75.6.165.166", 2026); // Adjust as needed
         mExecutor = Executors.newFixedThreadPool(1);
         GetDimmerDataCallable dimmerDataCallable = new GetDimmerDataCallable();
-        Future<RPC_DimmerDataArray> dimmerDataFuture = mExecutor.submit(dimmerDataCallable);
+        mDimmerDataFuture = mExecutor.submit(dimmerDataCallable);
 
         TextView sensorName = findViewById(R.id.titleBar);
         String name = getIntent().getStringExtra("sensorName");
@@ -57,21 +64,21 @@ public class ViewDimmerDataActivity extends AppCompatActivity {
             sensorName.setText(String.format("Sensor Name: %s", name));
         }
 
-        TextView currentBrightness = findViewById(R.id.currentBrightness);
-        TextView currentState = findViewById(R.id.currentState);
+        currentBrightness = findViewById(R.id.currentBrightness);
+        currentState = findViewById(R.id.currentState);
 
         ArrayList<Entry> brightnessValues = new ArrayList<>();
 
         try {
-            mDimmerDataArray = dimmerDataFuture.get();
+            mDimmerDataArray = mDimmerDataFuture.get();
             if(mDimmerDataArray != null && !mDimmerDataArray.getDimmerDataList().isEmpty()) {
                 for (int i = 0; i < mDimmerDataArray.getDimmerDataCount(); i++) {
-                    RPC_ShellyPlusDimmerData brightnessData = mDimmerDataArray.getDimmerData(i);
+                    latestBrightnessData = mDimmerDataArray.getDimmerData(i);
                     //might have to divide ts by 1000 for formatting
-                    brightnessValues.add(new Entry((float) brightnessData.getTimestamp(), (float) brightnessData.getBrightness()));
+                    brightnessValues.add(new Entry((float) latestBrightnessData.getTimestamp(), (float) latestBrightnessData.getBrightness()));
                     if (i == mDimmerDataArray.getDimmerDataCount() - 1) {
-                        currentBrightness.setText(String.format("Current Brightness: %s", brightnessData.getBrightness() + "%"));
-                        currentState.setText(String.format("Current State: " + (brightnessData.getState() ? "On" : "Off")));
+                        currentBrightness.setText(String.format("Current Brightness: %s", latestBrightnessData.getBrightness() + "%"));
+                        currentState.setText(String.format("Current State: " + (latestBrightnessData.getState() ? "On" : "Off")));
                     }
                 }
             } else {
@@ -89,6 +96,48 @@ public class ViewDimmerDataActivity extends AppCompatActivity {
         mChart.getXAxis().setValueFormatter(new LineChartTimeAxisValueFormatter());
         mChart.getAxisLeft().setTextColor(Color.WHITE);
         mChart.getAxisRight().setTextColor(Color.WHITE);
+
+        UpdateChart();
+
+        mHandler = new Handler();
+        mHandler.post(new UpdateDataRunnable());
+        mHandler.postDelayed(new UpdateUiRunnable(), 1000);
+    }
+
+    private void UpdateData() {
+        try {
+            GetDimmerDataCallable dimmerDataCallable = new GetDimmerDataCallable();
+            mDimmerDataFuture = mExecutor.submit(dimmerDataCallable);
+            mDimmerDataArray = mDimmerDataFuture.get();
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void UpdateChart() {
+
+        ArrayList<Entry> brightnessValues = new ArrayList<>();
+
+        try {
+            mDimmerDataArray = mDimmerDataFuture.get();
+            if(mDimmerDataArray != null && !mDimmerDataArray.getDimmerDataList().isEmpty()) {
+                for (int i = 0; i < mDimmerDataArray.getDimmerDataCount(); i++) {
+                    latestBrightnessData = mDimmerDataArray.getDimmerData(i);
+                    //might have to divide ts by 1000 for formatting
+                    brightnessValues.add(new Entry((float) latestBrightnessData.getTimestamp(), (float) latestBrightnessData.getBrightness()));
+                    if (i == mDimmerDataArray.getDimmerDataCount() - 1) {
+                        currentBrightness.setText(String.format("Current Brightness: %s", latestBrightnessData.getBrightness() + "%"));
+                        currentState.setText(String.format("Current State: " + (latestBrightnessData.getState() ? "On" : "Off")));
+                    }
+                }
+            } else {
+                Log.d(TAG, "empty temperature data");
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
 
         LineDataSet set1;
         if (mChart.getData() != null &&
@@ -125,7 +174,6 @@ public class ViewDimmerDataActivity extends AppCompatActivity {
             mChart.setData(data);
         }
     }
-
     class GetDimmerDataCallable implements Callable<RPC_DimmerDataArray> {
         @Override
         public RPC_DimmerDataArray call() throws Exception {
@@ -133,5 +181,22 @@ public class ViewDimmerDataActivity extends AppCompatActivity {
         }
     }
 
+    class UpdateDataRunnable implements Runnable {
+        @Override
+        public void run() {
+            UpdateData();
+            mHandler.postDelayed(this, 30000);
+        }
+    }
+
+    class UpdateUiRunnable implements Runnable {
+        @Override
+        public void run() {
+            currentBrightness.setText(String.format("Current Brightness: %s", latestBrightnessData.getBrightness() + "%"));
+            currentState.setText(String.format("Current State: " + (latestBrightnessData.getState() ? "On" : "Off")));
+            UpdateChart();
+            mHandler.postDelayed(this, 60000);
+        }
+    }
 }
 
