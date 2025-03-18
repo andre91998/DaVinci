@@ -43,9 +43,7 @@ public class ViewDimmerDataActivity extends AppCompatActivity {
     private Future<RPC_DimmerDataArray> mDimmerDataFuture;
     private TextView currentBrightness, currentState;
     private RPC_ShellyPlusDimmerData latestBrightnessData;
-    //TODO: all thread logic
     private Handler mHandler;
-    private Thread updateDataThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,6 +183,7 @@ public class ViewDimmerDataActivity extends AppCompatActivity {
         @Override
         public void run() {
             UpdateData();
+            //TODO: implement RPC callback to avoid looping this thread and make UI more responsive
             mHandler.postDelayed(this, 30000);
         }
     }
@@ -195,6 +194,7 @@ public class ViewDimmerDataActivity extends AppCompatActivity {
             currentBrightness.setText(String.format("Current Brightness: %s", latestBrightnessData.getBrightness() + "%"));
             currentState.setText(String.format("Current State: " + (latestBrightnessData.getState() ? "On" : "Off")));
             UpdateChart();
+            //TODO: implement RPC callback to avoid looping this thread and make UI more responsive
             mHandler.postDelayed(this, 60000);
         }
     }

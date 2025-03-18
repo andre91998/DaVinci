@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -27,7 +28,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import davinci.io.grpc.RPC_DimmerDataArray;
 import davinci.io.grpc.RPC_PlugDataArray;
+import davinci.io.grpc.RPC_ShellyPlusDimmerData;
 import davinci.io.grpc.RPC_ShellyPlusPlugData;
 import davinci.io.grpc.RPC_ShellyPlusTemperatureData;
 import davinci.io.grpc.RPC_TemperatureDataArray;
@@ -39,6 +42,10 @@ public class ViewPlugDataActivity extends AppCompatActivity {
     private GrpcClient mGrpcClient;
     private ExecutorService mExecutor;
     private RPC_PlugDataArray mPlugDataArray;
+    private Future<RPC_PlugDataArray> mPlugDataFuture;
+    private TextView currentPower;
+    private RPC_ShellyPlusPlugData latestPowerData;
+    private Handler mHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +56,7 @@ public class ViewPlugDataActivity extends AppCompatActivity {
         mGrpcClient = new GrpcClient("75.6.165.166", 2026); // Adjust as needed
         mExecutor = Executors.newFixedThreadPool(1);
         GetPlugDataCallable plugDataCallable = new GetPlugDataCallable();
-        Future<RPC_PlugDataArray> plugDataFuture = mExecutor.submit(plugDataCallable);
+        mPlugDataFuture = mExecutor.submit(plugDataCallable);
 
         TextView sensorName = findViewById(R.id.titleBar);
         String name = getIntent().getStringExtra("sensorName");
@@ -57,22 +64,22 @@ public class ViewPlugDataActivity extends AppCompatActivity {
             sensorName.setText(String.format("Sensor Name: %s", name));
         }
 
-        TextView currentPower = findViewById(R.id.currentPower);
+        currentPower = findViewById(R.id.currentPower);
 
         ArrayList<Entry> plugValues = new ArrayList<>();
         try {
-            mPlugDataArray = plugDataFuture.get();
+            mPlugDataArray = mPlugDataFuture.get();
             if(mPlugDataArray != null && !mPlugDataArray.getPlugDataList().isEmpty()) {
                 for (int i = 0; i < mPlugDataArray.getPlugDataCount(); i++) {
-                    RPC_ShellyPlusPlugData plugData = mPlugDataArray.getPlugData(i);
+                    latestPowerData = mPlugDataArray.getPlugData(i);
                     //might have to divide ts by 1000 for formatting
-                    plugValues.add(new Entry((float) plugData.getTimestamp(), (float) plugData.getPower()));
+                    plugValues.add(new Entry((float) latestPowerData.getTimestamp(), (float) latestPowerData.getPower()));
                     if (i == mPlugDataArray.getPlugDataCount() - 1) {
-                        currentPower.setText(String.format("Current Power Output: %s", plugData.getPower() + " W"));
+                        currentPower.setText(String.format("Current Voltage: %s", latestPowerData.getPower() + " V"));
                     }
                 }
             } else {
-                Log.d(TAG, "empty temperature data");
+                Log.d(TAG, "empty plug data");
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
@@ -86,6 +93,47 @@ public class ViewPlugDataActivity extends AppCompatActivity {
         mChart.getXAxis().setValueFormatter(new LineChartTimeAxisValueFormatter());
         mChart.getAxisLeft().setTextColor(Color.WHITE);
         mChart.getAxisRight().setTextColor(Color.WHITE);
+
+        UpdateChart();
+
+        mHandler = new Handler();
+        mHandler.post(new ViewPlugDataActivity.UpdateDataRunnable());
+        mHandler.postDelayed(new ViewPlugDataActivity.UpdateUiRunnable(), 1000);
+    }
+
+    private void UpdateData() {
+        try {
+            ViewPlugDataActivity.GetPlugDataCallable plugDataCallable = new ViewPlugDataActivity.GetPlugDataCallable();
+            mPlugDataFuture = mExecutor.submit(plugDataCallable);
+            mPlugDataArray = mPlugDataFuture.get();
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void UpdateChart() {
+
+        ArrayList<Entry> plugValues = new ArrayList<>();
+
+        try {
+            mPlugDataArray = mPlugDataFuture.get();
+            if (mPlugDataArray != null && !mPlugDataArray.getPlugDataList().isEmpty()) {
+                for (int i = 0; i < mPlugDataArray.getPlugDataCount(); i++) {
+                    latestPowerData = mPlugDataArray.getPlugData(i);
+                    //might have to divide ts by 1000 for formatting
+                    plugValues.add(new Entry((float) latestPowerData.getTimestamp(), (float) latestPowerData.getPower()));
+                    if (i == mPlugDataArray.getPlugDataCount() - 1) {
+                        currentPower.setText(String.format("Current Power: %s", latestPowerData.getPower() + " V"));
+                    }
+                }
+            } else {
+                Log.d(TAG, "empty plug data");
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
 
         LineDataSet set1;
         if (mChart.getData() != null &&
@@ -127,6 +175,25 @@ public class ViewPlugDataActivity extends AppCompatActivity {
         @Override
         public RPC_PlugDataArray call() throws Exception {
             return mGrpcClient.getPlugData();
+        }
+    }
+
+    class UpdateDataRunnable implements Runnable {
+        @Override
+        public void run() {
+            UpdateData();
+            //TODO: implement RPC callback to avoid looping this thread and make UI more responsive
+            mHandler.postDelayed(this, 30000);
+        }
+    }
+
+    class UpdateUiRunnable implements Runnable {
+        @Override
+        public void run() {
+            currentPower.setText(String.format("Current Voltage: %s", latestPowerData.getPower() + "V"));
+            UpdateChart();
+            //TODO: implement RPC callback to avoid looping this thread and make UI more responsive
+            mHandler.postDelayed(this, 60000);
         }
     }
 
