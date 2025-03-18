@@ -26,6 +26,7 @@ composeBom = "2024.11.00"
 material = "1.12.0"
 screenshot = "0.0.1-alpha08"
 adaptiveAndroid = "1.0.0"
+coreVersion = "1.6.1"
 
 [libraries]
 androidx-arcore = { module = "androidx.xr.arcore:arcore", version.ref = "arcore" }
@@ -55,6 +56,7 @@ mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
+core = { group = "androidx.test", name = "core", version.ref = "coreVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
