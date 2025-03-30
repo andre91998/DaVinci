@@ -5,6 +5,7 @@ arcore = "1.0.0-alpha01"
 comAndroidComposeScreenshotGradlePlugin = "0.0.1-alpha09"
 compose = "1.0.0-alpha01"
 core = "latest"
+graphview = "4.2.2"
 impress = "0.0.1"
 junit = "latest"
 junitJupiterApi = "5.7.0"
@@ -16,6 +17,7 @@ mockitoInline = "4.0.0"
 mockitoJunitJupiter = "3.6.28"
 mockitoKotlin = "latest"
 mockk = "latest"
+mpandroidchart = "v3.0.3"
 scenecore = "1.0.0-alpha01"
 kotlin = "2.0.21"
 concurrentFuturesKtx = "1.2.0"
@@ -24,6 +26,7 @@ composeBom = "2024.11.00"
 material = "1.12.0"
 screenshot = "0.0.1-alpha08"
 adaptiveAndroid = "1.0.0"
+coreVersion = "1.6.1"
 
 [libraries]
 androidx-arcore = { module = "androidx.xr.arcore:arcore", version.ref = "arcore" }
@@ -31,6 +34,7 @@ androidx-compose = { module = "androidx.xr.compose:compose", version.ref = "comp
 androidx-core = { module = "androidx.test:core", version.ref = "core" }
 androidx-scenecore = { module = "androidx.xr.scenecore:scenecore", version.ref = "scenecore" }
 com-android-compose-screenshot-gradle-plugin = { module = "com.android.compose.screenshot:com.android.compose.screenshot.gradle.plugin", version.ref = "comAndroidComposeScreenshotGradlePlugin" }
+graphview = { module = "com.jjoe64:graphview", version.ref = "graphview" }
 impress = { module = "com.google.ar:impress", version.ref = "impress" }
 junit = { module = "junit:junit", version.ref = "junit" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
@@ -51,6 +55,8 @@ mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito
 mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockitoJunitJupiter" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
+core = { group = "androidx.test", name = "core", version.ref = "coreVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

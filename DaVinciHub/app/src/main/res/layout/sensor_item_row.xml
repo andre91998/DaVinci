@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:background="@color/white"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:elevation="4dp"
+    android:clickable="true"
+    android:focusable="true">
+<LinearLayout
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <!-- First TextView for the main title -->
+    <TextView
+        android:id="@+id/title_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="RAZOR HD GEN III"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/orange_hue" />
+
+    <!-- Second TextView for the subtitle -->
+</LinearLayout>
+
+    <!-- Arrow Icon -->
+
+</LinearLayout>

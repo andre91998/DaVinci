@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">DaVinciHub</string>
+    <string name="main_activity">HOME</string>
 </resources>

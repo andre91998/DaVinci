@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId "com.davinci.hub"
-        minSdkVersion 23
+        minSdkVersion 24
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
@@ -72,6 +72,7 @@ dependencies {
     implementation 'org.apache.tomcat:annotations-api:6.0.53'
 
     implementation libs.com.android.compose.screenshot.gradle.plugin
+    implementation libs.core
 
     def composeBom = platform(libs.androidx.compose.bom)
     implementation composeBom
@@ -89,6 +90,8 @@ dependencies {
     implementation libs.androidx.activity.compose
 
     implementation libs.androidx.compose.ui.tooling
+
+    implementation libs.mpandroidchart
 
     //screenshotTestImplementation(libs.androidx.compose.ui.tooling)
 
