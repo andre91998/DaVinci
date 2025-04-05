@@ -1,5 +1,6 @@
 #include "mqtt_client.h"
 #include "JSONProcessorFactory.h"
+#include "encrypter.h"
 #include <iostream>
 //#include "buffers.h"
 
@@ -106,6 +107,8 @@ void MQTTClient::on_message(const std::string& topic, const std::string& payload
             } else if (processor->getType() == (int) SensorType::SHELLY_TEMP) {
                 auto data = std::get<ShellyPlusTemperatureData>(sensorData);
                 if (data.getSource().compare("stub") != 0) {
+                    std::string temp = Encrypter::encrypt(std::to_string(data.getTemperature()));
+                    Encrypter::decrypt(temp);
                     db_->execute("INSERT INTO shellyPlusTemperature (source, humidity, temperature, timestamp) VALUES ('" +
                                 data.getSource() + "', " +
                                 std::to_string(data.getTemperature()) + ", " +
