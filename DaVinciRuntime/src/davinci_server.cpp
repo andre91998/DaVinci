@@ -64,7 +64,7 @@ grpc::Status DaVinciServiceImpl::GetSensorList(grpc::ServerContext* context, con
 
 grpc::Status DaVinciServiceImpl::GetDimmerData(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_DimmerDataArray* response) {
     try {
-        auto rows = db_->query("SELECT source, brightness, state, timestamp FROM shellyDimmerData");
+        auto rows = db_->query("SELECT source, brightness, state, timestamp FROM shellyPlusDimmer");
         for (const auto& row : rows) {
             auto* data = response->add_dimmer_data();
             data->set_source(row[0]);
@@ -81,7 +81,7 @@ grpc::Status DaVinciServiceImpl::GetDimmerData(grpc::ServerContext* context, con
 
 grpc::Status DaVinciServiceImpl::GetPlugData(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_PlugDataArray* response) {
     try {
-        auto rows = db_->query("SELECT source, power, timestamp FROM shellyPlugData");
+        auto rows = db_->query("SELECT source, power, timestamp FROM shellyPlusPlug");
         std::cout << "Plug rows: " << rows.size() << std::endl;
         for (const auto& row : rows) {
             auto* data = response->add_plug_data();
@@ -98,7 +98,7 @@ grpc::Status DaVinciServiceImpl::GetPlugData(grpc::ServerContext* context, const
 
 grpc::Status DaVinciServiceImpl::GetTemperatureData(grpc::ServerContext* context, const daVinciRPC::Empty* request, daVinciRPC::RPC_TemperatureDataArray* response) {
     try {
-        auto rows = db_->query("SELECT source, humidity, temperature, timestamp FROM shellyTemperatureData");
+        auto rows = db_->query("SELECT source, humidity, temperature, timestamp FROM shellyPlusTemperature");
         for (const auto& row : rows) {
             auto* data = response->add_temperature_data();
             data->set_source(row[0]);
