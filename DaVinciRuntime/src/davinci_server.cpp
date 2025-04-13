@@ -10,6 +10,7 @@
 #include "ShellyPlusTemperatureData.h"
 #include "davinci_server.h"
 #include "sensor_types.h"
+#include "encrypter.h"
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -49,7 +50,7 @@ grpc::Status DaVinciServiceImpl::GetSensorList(grpc::ServerContext* context, con
                 std::string sensor_type = tableList.at(i);
                 sensor_type[0] = std::toupper(sensor_type[0]);
                 daVinciRPC::RPC_Sensor* sensor = response->add_rpc_sensor();
-                sensor->set_sensor_name(sensorSubList.at(j));
+                sensor->set_sensor_name(Encrypter::decrypt(sensorSubList.at(j)));
                 sensor->set_sensor_type(sensor_type);
             }
         }
@@ -67,10 +68,10 @@ grpc::Status DaVinciServiceImpl::GetDimmerData(grpc::ServerContext* context, con
         auto rows = db_->query("SELECT source, brightness, state, timestamp FROM shellyPlusDimmer");
         for (const auto& row : rows) {
             auto* data = response->add_dimmer_data();
-            data->set_source(row[0]);
-            data->set_brightness(std::stoi(row[1]));
-            data->set_state(std::stoi(row[2]));
-            data->set_timestamp(std::stoll(row[3]));
+            data->set_source(Encrypter::decrypt(row[0]));
+            data->set_brightness(std::stoi(Encrypter::decrypt(row[1])));
+            data->set_state(std::stoi(Encrypter::decrypt(row[2])));
+            data->set_timestamp(std::stoll(Encrypter::decrypt(row[3])));
         }
         return grpc::Status::OK;
     } catch (const std::exception& e) {
@@ -85,9 +86,9 @@ grpc::Status DaVinciServiceImpl::GetPlugData(grpc::ServerContext* context, const
         std::cout << "Plug rows: " << rows.size() << std::endl;
         for (const auto& row : rows) {
             auto* data = response->add_plug_data();
-            data->set_source(row[0]);
-            data->set_power(std::stod(row[1]));
-            data->set_timestamp(std::stoll(row[2]));
+            data->set_source(Encrypter::decrypt(row[0]));
+            data->set_power(std::stod(Encrypter::decrypt(row[1])));
+            data->set_timestamp(std::stoll(Encrypter::decrypt(row[2])));
         }
         return grpc::Status::OK;
     } catch (const std::exception& e) {
@@ -102,9 +103,9 @@ grpc::Status DaVinciServiceImpl::GetTemperatureData(grpc::ServerContext* context
         for (const auto& row : rows) {
             auto* data = response->add_temperature_data();
             data->set_source(row[0]);
-            data->set_humidity(std::stod(row[1]));
-            data->set_temperature(std::stod(row[2]));
-            data->set_timestamp(std::stoll(row[3]));
+            data->set_humidity(std::stod(Encrypter::decrypt(row[1])));
+            data->set_temperature(std::stod(Encrypter::decrypt(row[2])));
+            data->set_timestamp(std::stoll(Encrypter::decrypt(row[3])));
         }
         return grpc::Status::OK;
     } catch (const std::exception& e) {
@@ -136,7 +137,6 @@ void StopServer() {
 
 std::vector<std::string> GetUniqueColumnValues(Database* db, const std::string& tableName, const std::string& columnName) {
     std::vector<std::string> uniqueValues;
-    std::cout << "Get unique values for: " << columnName << std::endl;
     try {
         std::string query = "SELECT DISTINCT " + columnName + " FROM " + tableName;
         auto rows = db->query(query);
