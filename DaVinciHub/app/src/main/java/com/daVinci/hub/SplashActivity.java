@@ -15,10 +15,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set the content view for the splash screen
         setContentView(R.layout.activity_splash);
-
-        // Ensure that Firebase is initialized before proceeding
         init();
     }
 
@@ -27,13 +24,13 @@ public class SplashActivity extends AppCompatActivity {
             Thread.sleep(SPLASH_DISPLAY_LENGTH);
             proceedToNextActivity();
         } catch (Exception e) {
-            Log.e(TAG, "Firebase initialization failed: " + e.getMessage(), e);
+            Log.e(TAG, "Failed to Init DaVinci " + e.getMessage(), e);
         }
     }
 
     private void proceedToNextActivity() {
         new Handler().postDelayed(() -> {
-            Intent intent = new Intent(SplashActivity.this, MainActivity.class); // User is logged in, go to MainActivity
+            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         }, SPLASH_DISPLAY_LENGTH);

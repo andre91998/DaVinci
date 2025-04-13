@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import com.daVinci.hub.util.SensorRecyclerViewAdapter;
@@ -97,7 +98,24 @@ public class MainActivity extends AppCompatActivity {
         updateRecyclerView(mSensorList);
       } else {
         String selectedSensorType = (String) sensorTypeSpinner.getSelectedItem();
+        Log.d(TAG, "Filter for: " + selectedSensorType);
         updateRecyclerView(filterSensorsByType(selectedSensorType));
+      }
+    });
+
+    sensorTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+      @Override
+      public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if (toggleSlider.isChecked()) {
+          String selectedSensorType = (String) sensorTypeSpinner.getSelectedItem();
+          Log.d(TAG, "Filter for: " + selectedSensorType);
+          updateRecyclerView(filterSensorsByType(selectedSensorType));
+        }
+      }
+
+      @Override
+      public void onNothingSelected(AdapterView<?> parent) {
+        //Nothing
       }
     });
 
@@ -148,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
     Future<RPC_SensorArray> sensorsFuture = mExecutor.submit(sensorsCallable);
     try {
       mSensorList = sensorsFuture.get();
+      Log.d(TAG, mSensorList.toString());
     } catch (ExecutionException | InterruptedException e) {
       e.printStackTrace();
     }

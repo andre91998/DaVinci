@@ -80,7 +80,7 @@ public class ViewDimmerDataActivity extends AppCompatActivity {
                     }
                 }
             } else {
-                Log.d(TAG, "empty temperature data");
+                Log.d(TAG, "empty dimmer data");
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
