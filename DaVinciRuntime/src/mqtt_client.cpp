@@ -109,8 +109,8 @@ void MQTTClient::on_message(const std::string& topic, const std::string& payload
                 if (data.getSource().compare("stub") != 0) {
                     db_->execute("INSERT INTO shellyPlusTemperature (source, humidity, temperature, timestamp) VALUES (" +
                                 Encrypter::encrypt(data.getSource()) + ", " +
-                                Encrypter::encrypt(std::to_string(data.getTemperature())) + ", " +
                                 Encrypter::encrypt(std::to_string(data.getHumidity())) + ", " +
+                                Encrypter::encrypt(std::to_string(data.getTemperature())) + ", " +
                                 Encrypter::encrypt(std::to_string(data.getTimestamp())) + ")");
                 }
             }
