@@ -1,5 +1,6 @@
 #include "mqtt_client.h"
 #include "JSONProcessorFactory.h"
+#include "encrypter.h"
 #include <iostream>
 //#include "buffers.h"
 
@@ -89,28 +90,28 @@ void MQTTClient::on_message(const std::string& topic, const std::string& payload
             if (processor->getType() == (int) SensorType::SHELLY_DIMMER) {
                 auto data = std::get<ShellyPlusDimmerData>(sensorData);
                 if (data.getSource().compare("stub") != 0) {
-                    db_->execute("INSERT INTO shellyPlusDimmer (source, brightness, state, timestamp) VALUES ('" +
-                                data.getSource() + "', " +
-                                std::to_string(data.getBrightness()) + ", " +
-                                std::to_string(data.getState()) + ", " +
-                                std::to_string(data.getTimestamp()) + ")");
+                    db_->execute("INSERT INTO shellyPlusDimmer (source, brightness, state, timestamp) VALUES (" +
+                                Encrypter::encrypt(data.getSource()) + ", " +
+                                Encrypter::encrypt(std::to_string(data.getBrightness())) + ", " +
+                                Encrypter::encrypt(std::to_string(data.getState())) + ", " +
+                                Encrypter::encrypt(std::to_string(data.getTimestamp())) + ")");
                 }
             } else if (processor->getType() == (int) SensorType::SHELLY_PLUG) {
                 auto data = std::get<ShellyPlusPlugData>(sensorData);
                 if (data.getSource().compare("stub") != 0) {
-                    db_->execute("INSERT INTO shellyPlusPlug (source, power, timestamp) VALUES ('" +
-                                data.getSource() + "', " +
-                                std::to_string(data.getPower()) + ", " +
-                                std::to_string(data.getTimestamp()) + ")");
+                    db_->execute("INSERT INTO shellyPlusPlug (source, power, timestamp) VALUES (" +
+                                Encrypter::encrypt(data.getSource()) + ", " +
+                                Encrypter::encrypt(std::to_string(data.getPower())) + ", " +
+                                Encrypter::encrypt(std::to_string(data.getTimestamp())) + ")");
                     }
             } else if (processor->getType() == (int) SensorType::SHELLY_TEMP) {
                 auto data = std::get<ShellyPlusTemperatureData>(sensorData);
                 if (data.getSource().compare("stub") != 0) {
-                    db_->execute("INSERT INTO shellyPlusTemperature (source, humidity, temperature, timestamp) VALUES ('" +
-                                data.getSource() + "', " +
-                                std::to_string(data.getTemperature()) + ", " +
-                                std::to_string(data.getHumidity()) + ", " +
-                                std::to_string(data.getTimestamp()) + ")");
+                    db_->execute("INSERT INTO shellyPlusTemperature (source, humidity, temperature, timestamp) VALUES (" +
+                                Encrypter::encrypt(data.getSource()) + ", " +
+                                Encrypter::encrypt(std::to_string(data.getHumidity())) + ", " +
+                                Encrypter::encrypt(std::to_string(data.getTemperature())) + ", " +
+                                Encrypter::encrypt(std::to_string(data.getTimestamp())) + ")");
                 }
             }
         } else {
