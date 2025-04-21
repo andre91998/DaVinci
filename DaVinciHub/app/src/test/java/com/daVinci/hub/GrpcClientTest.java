@@ -3,6 +3,8 @@ package com.daVinci.hub;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import android.util.Log;
+
 import io.grpc.ManagedChannel;
 import io.grpc.StatusRuntimeException;
 import org.junit.jupiter.api.*;
@@ -28,13 +30,23 @@ public class GrpcClientTest {
 
     @BeforeEach
     public void setUp() {
-        //grpcClient = new GrpcClient("75.6.165.166", 2026);
+        // Initialize Mockito annotations
+        MockitoAnnotations.openMocks(this);
+
         grpcClient = new GrpcClient("75.6.165.166", 50051);
         try {
             setGrpcClientBlockingStub(grpcClient, mockBlockingStub);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             fail("Failed to set up GrpcClient: " + e.getMessage());
         }
+
+        mockStatic(Log.class);
+        when(Log.e(anyString(), anyString())).thenReturn(0);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        clearAllCaches();
     }
 
     private void setGrpcClientBlockingStub(GrpcClient grpcClient, DaVinciServiceGrpc.DaVinciServiceBlockingStub blockingStub)

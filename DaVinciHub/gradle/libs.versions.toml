@@ -1,10 +1,13 @@
 [versions]
 androidx-runtime = "1.8.0-alpha06"
 agp = "8.6.1"
+androidxCore = "1.5.0"
+androidxJunit = "1.2.1"
 arcore = "1.0.0-alpha01"
 comAndroidComposeScreenshotGradlePlugin = "0.0.1-alpha09"
 compose = "1.0.0-alpha01"
 core = "latest"
+espressoCore = "3.6.1"
 graphview = "4.2.2"
 impress = "0.0.1"
 junit = "latest"
@@ -32,6 +35,10 @@ coreVersion = "1.6.1"
 androidx-arcore = { module = "androidx.xr.arcore:arcore", version.ref = "arcore" }
 androidx-compose = { module = "androidx.xr.compose:compose", version.ref = "compose" }
 androidx-core = { module = "androidx.test:core", version.ref = "core" }
+androidx-core-v150 = { module = "androidx.test:core", version.ref = "androidxCore" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidxJunit" }
+androidx-rules = { module = "androidx.test:rules", version.ref = "androidxCore" }
 androidx-scenecore = { module = "androidx.xr.scenecore:scenecore", version.ref = "scenecore" }
 com-android-compose-screenshot-gradle-plugin = { module = "com.android.compose.screenshot:com.android.compose.screenshot.gradle.plugin", version.ref = "comAndroidComposeScreenshotGradlePlugin" }
 graphview = { module = "com.jjoe64:graphview", version.ref = "graphview" }

@@ -100,6 +100,11 @@ dependencies {
     testImplementation libs.mockito.inline
     testImplementation libs.junit.jupiter.api
     testRuntimeOnly libs.junit.jupiter.engine
+
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.core.v150
+    androidTestImplementation libs.androidx.espresso.core
+    androidTestImplementation libs.androidx.rules
 }
 
 java {
