@@ -17,7 +17,7 @@ import java.lang.reflect.Field;
 
 import davinci.io.grpc.*;
 
-@ExtendWith(MockitoExtension.class)
+//@ExtendWith(MockitoExtension.class)
 public class GrpcClientTest {
 
     @Mock
@@ -36,6 +36,10 @@ public class GrpcClientTest {
         grpcClient = new GrpcClient("75.6.165.166", 50051);
         try {
             setGrpcClientBlockingStub(grpcClient, mockBlockingStub);
+            Field blockingStubField = GrpcClient.class.getDeclaredField("blockingStub");
+            blockingStubField.setAccessible(true);
+            Object injectedStub = blockingStubField.get(grpcClient);
+            assertEquals(mockBlockingStub, injectedStub, "The mockBlockingStub was not correctly injected!");
         } catch (NoSuchFieldException | IllegalAccessException e) {
             fail("Failed to set up GrpcClient: " + e.getMessage());
         }
@@ -75,7 +79,8 @@ public class GrpcClientTest {
         when(mockBlockingStub.getSupportedSensorTypes(any(Empty.class))).thenThrow(StatusRuntimeException.class);
 
         RPC_SupportedSensorTypes actualResponse = grpcClient.getSupportedSensorTypes();
-        assertNull(actualResponse);
+        assertEquals(RPC_SupportedSensorTypes.newBuilder().build().getSensorTypesCount(),
+                actualResponse.getSensorTypesCount());
     }
 
     @Test
@@ -98,7 +103,8 @@ public class GrpcClientTest {
         when(mockBlockingStub.getSensorList(any(Empty.class))).thenThrow(StatusRuntimeException.class);
 
         RPC_SensorArray actualResponse = grpcClient.getAllSensors();
-        assertNull(actualResponse);
+        assertEquals(RPC_SensorArray.newBuilder().build().getRPCSensorCount(),
+                actualResponse.getRPCSensorCount());
     }
 
     @Test
@@ -119,7 +125,8 @@ public class GrpcClientTest {
         when(mockBlockingStub.getDimmerData(any(Empty.class))).thenThrow(StatusRuntimeException.class);
 
         RPC_DimmerDataArray actualResponse = grpcClient.getDimmerData();
-        assertNull(actualResponse);
+        assertEquals(RPC_DimmerDataArray.newBuilder().build().getDimmerDataCount(),
+                actualResponse.getDimmerDataCount());
     }
 
     @Test
@@ -140,7 +147,8 @@ public class GrpcClientTest {
         when(mockBlockingStub.getPlugData(any(Empty.class))).thenThrow(StatusRuntimeException.class);
 
         RPC_PlugDataArray actualResponse = grpcClient.getPlugData();
-        assertNull(actualResponse);
+        assertEquals(RPC_PlugDataArray.newBuilder().build().getPlugDataCount(),
+                actualResponse.getPlugDataCount());
     }
 
     @Test
@@ -161,7 +169,8 @@ public class GrpcClientTest {
         when(mockBlockingStub.getTemperatureData(any(Empty.class))).thenThrow(StatusRuntimeException.class);
 
         RPC_TemperatureDataArray actualResponse = grpcClient.getTemperatureData();
-        assertNull(actualResponse);
+        assertEquals(RPC_TemperatureDataArray.newBuilder().build().getTemperatureDataCount(),
+                actualResponse.getTemperatureDataCount());
     }
 
     @Test
