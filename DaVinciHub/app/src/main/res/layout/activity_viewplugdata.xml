@@ -58,7 +58,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Current Power Output: -- W"
+        android:text="Current Voltage: -- V"
         android:textSize="22sp"
         android:textColor="@color/light_gray"
         app:layout_constraintEnd_toEndOf="parent"

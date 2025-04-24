@@ -125,7 +125,7 @@ public class ViewPlugDataActivity extends AppCompatActivity {
                     //might have to divide ts by 1000 for formatting
                     plugValues.add(new Entry((float) latestPowerData.getTimestamp(), (float) latestPowerData.getPower()));
                     if (i == mPlugDataArray.getPlugDataCount() - 1) {
-                        currentPower.setText(String.format("Current Power: %s", latestPowerData.getPower() + " V"));
+                        currentPower.setText(String.format("Current Voltage: %s", latestPowerData.getPower() + " V"));
                     }
                 }
             } else {
