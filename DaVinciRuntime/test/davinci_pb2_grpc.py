@@ -42,7 +42,7 @@ class DaVinciServiceStub(object):
         self.GetSensorList = channel.unary_unary(
                 '/daVinciRPC.DaVinciService/GetSensorList',
                 request_serializer=davinci__pb2.Empty.SerializeToString,
-                response_deserializer=davinci__pb2.RPC_Sensors.FromString,
+                response_deserializer=davinci__pb2.RPC_SensorArray.FromString,
                 _registered_method=True)
         self.GetDimmerData = channel.unary_unary(
                 '/daVinciRPC.DaVinciService/GetDimmerData',
@@ -105,7 +105,7 @@ def add_DaVinciServiceServicer_to_server(servicer, server):
             'GetSensorList': grpc.unary_unary_rpc_method_handler(
                     servicer.GetSensorList,
                     request_deserializer=davinci__pb2.Empty.FromString,
-                    response_serializer=davinci__pb2.RPC_Sensors.SerializeToString,
+                    response_serializer=davinci__pb2.RPC_SensorArray.SerializeToString,
             ),
             'GetDimmerData': grpc.unary_unary_rpc_method_handler(
                     servicer.GetDimmerData,
@@ -176,7 +176,7 @@ class DaVinciService(object):
             target,
             '/daVinciRPC.DaVinciService/GetSensorList',
             davinci__pb2.Empty.SerializeToString,
-            davinci__pb2.RPC_Sensors.FromString,
+            davinci__pb2.RPC_SensorArray.FromString,
             options,
             channel_credentials,
             insecure,

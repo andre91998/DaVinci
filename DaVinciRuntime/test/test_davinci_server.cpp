@@ -5,6 +5,7 @@
 #include "davinci.grpc.pb.h"
 #include "davinci_server.h"
 #include "database.h"
+#include "encrypter.h"
 
 class DaVinciServiceTest : public ::testing::Test {
 protected:
@@ -18,9 +19,20 @@ protected:
         db->execute("CREATE TABLE IF NOT EXISTS shellyPlusPlug (source TEXT, power REAL, timestamp INTEGER)");
         db->execute("CREATE TABLE IF NOT EXISTS shellyPlusTemperature (source TEXT, temperature REAL, humidity REAL, timestamp INTEGER)");
 
-        db->execute("INSERT INTO shellyPlusDimmer (source, brightness, state, timestamp) VALUES ('source1', 50, 1, 1234567890)");
-        db->execute("INSERT INTO shellyPlusPlug (source, power, timestamp) VALUES ('source1', 100.0, 1234567890)");
-        db->execute("INSERT INTO shellyPlusTemperature (source, temperature, humidity, timestamp) VALUES ('source1', 25.0, 60.0, 1234567890)");
+        db->execute("INSERT INTO shellyPlusDimmer (source, brightness, state, timestamp) VALUES (" +
+            Encrypter::encrypt("source1") + ", " +
+            Encrypter::encrypt("50") + ", " +
+            Encrypter::encrypt("1") + ", " +
+            Encrypter::encrypt("1234567890") + ")");
+        db->execute("INSERT INTO shellyPlusPlug (source, power, timestamp) VALUES (" +
+            Encrypter::encrypt("source1") + ", " +
+            Encrypter::encrypt("100.0") + ", " +
+            Encrypter::encrypt("1234567890") + ")");
+        db->execute("INSERT INTO shellyPlusTemperature (source, humidity, temperature, timestamp) VALUES (" +
+            Encrypter::encrypt("source1") + ", " +
+            Encrypter::encrypt("25.0") + ", " +
+            Encrypter::encrypt("60.0") + ", " +
+            Encrypter::encrypt("1234567890") + ")");
 
         service = new DaVinciServiceImpl(db);
     }
@@ -89,11 +101,11 @@ TEST_F(DaVinciServiceTest, GetSensorList) {
     ASSERT_TRUE(status.ok());
     ASSERT_EQ(response.rpc_sensor_size(), 3);
     EXPECT_EQ(response.rpc_sensor(0).sensor_name(), "source1");
-    EXPECT_EQ(response.rpc_sensor(0).sensor_type(), "ShellyDimmerData");
+    EXPECT_EQ(response.rpc_sensor(0).sensor_type(), "ShellyPlusDimmer");
     EXPECT_EQ(response.rpc_sensor(1).sensor_name(), "source1");
-    EXPECT_EQ(response.rpc_sensor(1).sensor_type(), "ShellyPlugData");
+    EXPECT_EQ(response.rpc_sensor(1).sensor_type(), "ShellyPlusPlug");
     EXPECT_EQ(response.rpc_sensor(2).sensor_name(), "source1");
-    EXPECT_EQ(response.rpc_sensor(2).sensor_type(), "ShellyTemperatureData");
+    EXPECT_EQ(response.rpc_sensor(2).sensor_type(), "ShellyPlusTemperature");
 }
 
 TEST_F(DaVinciServiceTest, RunServer) {
